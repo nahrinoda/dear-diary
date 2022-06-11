@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "deardiary": {
+      "main": "src/deardiary/main.mo",
+      "type": "motoko"
+    },
+    "deardiary_assets": {
+      "dependencies": [
+        "deardiary"
+      ],
+      "frontend": {
+        "entrypoint": "src/deardiary_assets/src/index.html"
+      },
+      "source": [
+        "src/deardiary_assets/assets",
+        "dist/deardiary_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.9.3",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}
