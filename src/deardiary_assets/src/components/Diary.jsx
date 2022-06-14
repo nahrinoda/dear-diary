@@ -1,62 +1,130 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import LeftSidebar from './LeftSidebar';
+import { deardiary } from '../../../declarations/deardiary';
 
-function Diary({ saveDiary, deleteDiary }) {
-    const [diary, setDiary] = useState({
-        label: 'Diary Label',
-        content: 'Start writting your thoughts here...'
-    });
+function Diary() {
+    const [label, setLabel] = useState('');
+    const [content, setContent] = useState('');
+    const [createdAt, setCreatedAt] = useState();
+    const [diaryId, setDiaryId] = useState(0);
+    const [diariesList, setDiariesList] = useState([]);
+    const [diary, setDiary] = useState({});
+    const [sidebarDiaryCotent, setSidebarDiaryContent] = useState('');
+    const [isDisabled, setIsDisabled] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setDiary(prevDiary => {
-            return {
-                ...prevDiary,
-                [name]: value
-            };
-        });
+
+    useEffect(() => {
+        const diaryIsCreated = Object.keys(diary).length;
+        if (diaryIsCreated > 0) {
+            setDiariesList(previousDiariesList => [diary, ...previousDiariesList]);
+        };
+    }, [diary])
+
+    const handleLabelChange = (e) => {
+        const currentLabel = e.target.value;
+        setIsDisabled(false);
+        setLabel(currentLabel);
+    };
+
+    const handleContentChange = (e) => {
+        const currentContent = e.target.value;
+        setIsDisabled(false);
+        setContent(currentContent);
     };
 
     const handleSaveDiary = (e) => {
-        saveDiary(diary);
+        var today = new Date();
+        var date = (today.toLocaleString('en-us', { month: 'long' })) + ', ' + today.getFullYear();
+        setDiaryId(diaryId + 1);
+        setCreatedAt(date);
+        setIsDisabled(true);
+
+        if (diary.id === undefined) {
+            setDiary({
+                id: diaryId + 1,
+                label,
+                content,
+                createdAt: date
+            });
+        } else {
+            diariesList[diary.id - 1] = {
+                id: diary.id,
+                label,
+                content,
+                createdAt
+            }
+        };
+
+        if (content === '') {
+            setSidebarDiaryContent('New Diary');
+        } else {
+            setSidebarDiaryContent(content);
+        };
     };
 
     const handleDeleteDiary = (e) => {
-        deleteDiary(diary);
-    }
+        console.log('delete diary')
+    };
+
+    const handleCreateNewDiary = (e) => {
+        var today = new Date();
+        var date = (today.toLocaleString('en-us', { month: 'long' })) + ', ' + today.getFullYear();
+        setDiaryId(diaryId + 1);
+        setCreatedAt(date);
+        setSidebarDiaryContent('New Diary');
+        setDiary({
+            id: diaryId + 1,
+            label,
+            content,
+            createdAt: date
+        });
+        console.log('diaryId: ', diaryId)
+    };
+
+    const handleSelectedDiary = (e) => {
+        const currentItemId = Number(e.target.id);
+        diariesList.some(diary => {
+            if (diary.id === currentItemId) {
+                console.log('select diary: ', diary)
+                return true
+            } else {
+                return false
+            }
+        });
+    };
 
     return (
-        <div className="diary">
-            <div className='diary-controls'>
-                {/* <div
-                    className='label'
-                    type="text"
-                    name="label"
-                    placeholder="Diary Label"
-                    value={diary.label}
-                    onChange={handleChange}
-                /> */}
-                <div
-                    className='label'
-                    contentEditable={true}
-                >
-                    {diary.label}
+        <div className="content">
+            <LeftSidebar
+                handleCreateNewDiary={handleCreateNewDiary}
+                diaryContent={sidebarDiaryCotent}
+                createDate={createdAt}
+                diariesListIsHidden={diariesList.length === 0}
+                currentDiaryCount={`(${diariesList.length})`}
+                diariesList={diariesList}
+                handleSelectedDiary={handleSelectedDiary}
+            />
+            <div className="diary">
+                <div className='diary-controls'>
+                    <input
+                        className='label'
+                        name='label'
+                        placeholder='Diary Label'
+                        value={label}
+                        onChange={handleLabelChange}
+                    />
+                    <div>
+                        <button onClick={handleSaveDiary} disabled={isDisabled}>Save</button>
+                        <button onClick={handleDeleteDiary}>Delete</button>
+                    </div>
                 </div>
-                <div>
-                    <button onClick={handleSaveDiary}>Save</button>
-                    <button onClick={handleDeleteDiary}>Delete</button>
-                </div>
-            </div>
-            {/* <textarea
-                className='content'
-                name="content"
-                placeholder="Start writting your thoughts here..."
-                value={diary.content}
-                onChange={handleChange}
-            /> */}
-            <div 
-                className='diary-content'
-                contentEditable={true}>
-                {diary.content}
+                <textarea
+                    className='diary-content'
+                    name='content'
+                    placeholder='Start writting your thoughts here...'
+                    value={content}
+                    onChange={handleContentChange}
+                />
             </div>
         </div>
     );

@@ -14,8 +14,17 @@ body {
   font-family: 'Open Sans', sans-serif;
 }
 
-div:focus, select:focus{
+div:focus, input:focus, textarea:focus, select:focus{
   outline: none;
+}
+
+textarea {
+  resize: none;
+  box-sizing: border-box; 
+  width: 100%; 
+  height: 90%;
+  border: none;
+  background: none;
 }
 
 .label {
@@ -60,13 +69,31 @@ footer p {
   margin: 25px 0;
 }
 
+.left-sidebar-controls {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: solid 1px #3e3e40;
+  padding: 10px;
+  height: 45px;
+}
+
 .left-sidebar {
   border: dotted 1px orange;
   width: 346px;
   margin: 0 35px 0 6%;
   display: flex;
+  flex-direction: column;
+}
+
+.diary-created-container {
+  width: 100%;
+  display: flex;
   justify-content: space-between;
-  height: 25px;
+}
+
+.diary-date {
+  font-weight: 700;
+  list-style-type: none;
 }
 
 .add-new-diary {
@@ -80,8 +107,7 @@ footer p {
   width: 70%;
   height: 100%;
   margin-right: 6%;
-  overflow: auto;
-  scroll-behavior: smooth;
+  overflow: hidden;
 }
 
 .diary-controls {
@@ -89,8 +115,14 @@ footer p {
   display: flex;
   justify-content: space-between;
   padding: 10px;
+  background: #f2f2f2;
+  height: 45px;
+  width: 100%;
 }
 
 .diary-content {
   padding: 10px;
+  position: relative;
+  overflow: auto;
+  scroll-behavior: smooth;
 }
