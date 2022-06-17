@@ -152,7 +152,7 @@ footer p {
 
 .left-sidebar {
   /* border: dotted 1px orange; */
-  width: 346px;
+  min-width: 300px;
   margin: 0 35px 0 6%;
   display: flex;
   flex-direction: column;
@@ -200,7 +200,6 @@ footer p {
 }
 
 .left-sidebar-item {
-  width: 346px;
   display: flex;
   height: 35px;
   line-height: 35px;
@@ -220,6 +219,8 @@ footer p {
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
+  width: inherit;
+  text-align: initial;
 }
 
 .left-sidebar-content-id {

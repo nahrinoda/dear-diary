@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 function LeftSidebar({
     handleCreateNewDiary,
-    diariesList
+    diariesList,
+    selectDiary,
+    selectedIndex
 }) {
     const [diariesGroupedByCreatedBy, setDiariesGroupedByCreatedBy] = useState([]);
-    const [selectedIndex, setSelectedIndex] = useState(0);
 
     useEffect(() => {
         const currentDiariesGroupedByCreatedBy = diariesList.reduce((previousDiary, currentDiary) => {
@@ -16,13 +17,6 @@ function LeftSidebar({
 
         setDiariesGroupedByCreatedBy(currentDiariesGroupedByCreatedBy);
     }, [diariesList]);
-
-    const selectDiary = (e) => {
-        const targetId = Number(e.currentTarget.id);
-        const currentDiaryList = Object.entries(diariesGroupedByCreatedBy).map(item => item[1]);
-        const findSelectedIndex = currentDiaryList[0].findIndex((diary) => diary.id === targetId);
-        setSelectedIndex(findSelectedIndex);
-    };
     
     return (
         <div className='left-sidebar'>
