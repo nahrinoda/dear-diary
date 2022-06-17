@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 
 function LeftSidebar({
     handleCreateNewDiary,
-    selectedIndex,
-    diariesList,
-    handleSelectedDiary
+    diariesList
 }) {
     const [diariesGroupedByCreatedBy, setDiariesGroupedByCreatedBy] = useState([]);
+    const [selectedIndex, setSelectedIndex] = useState(0);
 
     useEffect(() => {
         const currentDiariesGroupedByCreatedBy = diariesList.reduce((previousDiary, currentDiary) => {
@@ -17,12 +16,21 @@ function LeftSidebar({
 
         setDiariesGroupedByCreatedBy(currentDiariesGroupedByCreatedBy);
     }, [diariesList]);
-console.log('Object.entries(diariesGroupedByCreatedBy): ', Object.entries(diariesGroupedByCreatedBy))
+
+    const selectDiary = (e) => {
+        const targetId = Number(e.currentTarget.id);
+        const currentDiaryList = Object.entries(diariesGroupedByCreatedBy).map(item => item[1]);
+        const findSelectedIndex = currentDiaryList[0].findIndex((diary) => diary.id === targetId);
+        setSelectedIndex(findSelectedIndex);
+    };
+    
     return (
         <div className='left-sidebar'>
-            <div className='left-sidebar-controls'>
-                <div>Left Sidebar</div>
-                <div className='add-new-diary' onClick={handleCreateNewDiary}>Add</div>
+            <div className='left-sidebar-controls' onClick={handleCreateNewDiary}>
+                <div className='add-new-diary'>
+                    <span className='material-icons md-18 add-margin'>add</span>
+                    New Diary
+                </div>
             </div>
             {Object.entries(diariesGroupedByCreatedBy).map((item, index) => (
                 <dl key={index}>
@@ -31,10 +39,16 @@ console.log('Object.entries(diariesGroupedByCreatedBy): ', Object.entries(diarie
                         <span>{`(${item[1].length})`}</span>
                     </dt>
                     {item[1].map((diary, index) => (
-                        <dd key={index} id={diary.id} onClick={handleSelectedDiary}>
-                        <span>{diary.id}</span>
-                        {diary.content}
-                    </dd>
+                        <dd 
+                            className={'left-sidebar-item'} 
+                            key={index} 
+                            id={diary.id} 
+                            onClick={selectDiary}
+                            style={{background: item[1].indexOf(diary) === selectedIndex ? '#8c8c8c3e' : null}}
+                        >
+                            <div className='left-sidebar-content-id'>{diary.id}</div>
+                            <div className='left-sidebar-content'>{diary.content}</div>
+                        </dd>
                     )) }
                 </dl>
             ))}

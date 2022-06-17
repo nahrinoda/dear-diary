@@ -23,8 +23,8 @@ function Diary() {
     ]);
     const [diary, setDiary] = useState({});
     const [sidebarDiaryCotent, setSidebarDiaryContent] = useState('');
-    const [isDisabled, setIsDisabled] = useState(false);
-    const [selectedDiary, setSelectedDiary] = useState({});
+    const [isDisabled, setIsDisabled] = useState(true);
+    const [selectedDiaryId, setSelectedDiaryId] = useState(0);
 
 
     useEffect(() => {
@@ -101,47 +101,40 @@ function Diary() {
     };
 
     const handleSelectedDiary = (e) => {
-        const currentItemId = Number(e.target.id);
-        setDiaryId(currentItemId);
+        const currentItemId = Number(e.currentTarget.id);
+        setSelectedDiaryId(currentItemId);
+        console.log('currentItemId: ', currentItemId);
     };
 
-    const groupBy = (objectArray, property) => {
-        return objectArray.reduce((acc, obj) => {
-            let key = obj[property]
-            if (!acc[key]) {
-                acc[key] = []
-            }
-            acc[key].push(obj)
-            return acc
-        }, {})
-    }
-    let groupedPeople = groupBy(diariesList, 'createdAt')
-
-    const currentDiary = diariesList.filter(diary => diary.id === diaryId);
+    const buttonStyle = isDisabled ? 'button-inactive' : 'button';
 
     return (
         <div className="content">
             <LeftSidebar
                 handleCreateNewDiary={handleCreateNewDiary}
-                diaryContent={currentDiary && diary.content}
-                createDate={diary.createdAt}
-                diariesListIsHidden={diariesList.length === 0}
-                currentDiaryCount={`(${diariesList.length})`}
                 diariesList={diariesList}
                 handleSelectedDiary={handleSelectedDiary}
+                diaryIsSelected={selectedDiaryId === 1}
             />
             <div className="diary">
                 <div className='diary-controls'>
-                    <input
-                        className='label'
-                        name='label'
-                        placeholder='Diary Label'
-                        value={label}
-                        onChange={handleLabelChange}
-                    />
-                    <div>
-                        <button id={diaryId} onClick={handleSaveDiary} disabled={isDisabled}>Save</button>
-                        <button onClick={handleDeleteDiary}>Delete</button>
+                    <div className='diary-label-container'>
+                        <input
+                            className='label'
+                            name='label'
+                            placeholder='Diary Label'
+                            value={label}
+                            onChange={handleLabelChange}
+                        />
+                        {/* <span className='material-icons md-18 arrow-down-icon' onClick={handleTitleOptions} hidden={true}>keyboard_arrow_down</span> */}
+                    </div>
+                    <div className='buttons-container'>
+                        <button className={`save-${buttonStyle}`} id={diaryId} onClick={handleSaveDiary} disabled={isDisabled}>
+                            <span className='material-icons md-18'>save</span>
+                        </button>
+                        <button className={`delete-${buttonStyle}`} onClick={handleDeleteDiary} disabled={isDisabled}>
+                            <span className='material-icons md-18'>delete_outline</span>
+                        </button>
                     </div>
                 </div>
                 <textarea

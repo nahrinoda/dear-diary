@@ -9,8 +9,8 @@ html {
 }
 
 body {
-  background: #d9d6d2;
-  color: #232226;
+  background: #D9D6D2;
+  color: #3E3E40;
   font-family: 'Open Sans', sans-serif;
 }
 
@@ -39,12 +39,14 @@ textarea {
 
 header {
   height: 44px;
-  border-bottom: solid 1px #3e3e40;
+  border-bottom: solid 1px #F2F2F2;
 }
 
-header h1 {
-  font-weight: 300;
+header h2 {
+  font-weight: 600;
   margin-left: 6%;
+  line-height: 44px;
+  color: #8C8C8C;
 }
 
 footer {
@@ -64,21 +66,92 @@ footer p {
   display: flex;
   width: 100%;
   height: 85%;
-  border: dotted 1px red;
+  /* border: dotted 1px red; */
   flex-direction: row;
   margin: 25px 0;
 }
 
 .left-sidebar-controls {
   display: flex;
-  justify-content: space-between;
-  border-bottom: solid 1px #3e3e40;
-  padding: 10px;
+  justify-content: center;
   height: 45px;
+  border: solid 1px #5bc0de;
+  background: #5bc0de;
+  color: #F2F2F2;
+  margin-bottom: 10px;
+  width: 100%;
+  align-items: center;
+  text-align: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buttons-container {
+  display: flex;
+}
+
+.save-button,
+.delete-button,
+.save-button-inactive,
+.delete-button-inactive {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+}
+
+.save-button {
+  border: solid 1px #5bc0de;
+  background: #5bc0de;
+  color: #F2F2F2;
+  cursor: pointer;
+}
+
+.delete-button {
+  border: solid 1px #DE5B5B;
+  background: #DE5B5B;
+  color: #F2F2F2;
+  cursor: pointer;
+}
+
+.save-button:hover,
+.delete-button:hover {
+  opacity: 0.5;
+}
+
+.save-button-inactive,
+.delete-button-inactive {
+  background: #8c8c8c2c;
+  border: solid 1px #8c8c8c2c;
+  color: #f2f2f2;
+  cursor: not-allowed;
+  pointer-events: all !important;
+}
+
+.material-icons.md-18 { 
+  font-size: 18px; 
+}
+
+.add-new-diary {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-margin {
+  margin-right: 5px;
+  align-self: end;
+}
+
+.left-sidebar-controls:hover {
+  opacity: 0.5;
 }
 
 .left-sidebar {
-  border: dotted 1px orange;
+  /* border: dotted 1px orange; */
   width: 346px;
   margin: 0 35px 0 6%;
   display: flex;
@@ -89,15 +162,13 @@ footer p {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 10px;
+  color: #8C8C8C;
 }
 
 .diary-date {
   font-weight: 700;
   list-style-type: none;
-}
-
-.add-new-diary {
-  cursor: pointer;
 }
 
 .diary {
@@ -111,9 +182,10 @@ footer p {
 }
 
 .diary-controls {
-  border-bottom: solid 1px #3e3e40;
+  border-bottom: solid 1px #D9D6D2;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 10px;
   background: #f2f2f2;
   height: 45px;
@@ -125,4 +197,43 @@ footer p {
   position: relative;
   overflow: auto;
   scroll-behavior: smooth;
+}
+
+.left-sidebar-item {
+  width: 346px;
+  display: flex;
+  height: 35px;
+  line-height: 35px;
+  margin: 5px 0;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  font-weight: 300;
+}
+
+.left-sidebar-item:hover {
+  background: #8c8c8c3e;
+}
+
+.left-sidebar-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+}
+
+.left-sidebar-content-id {
+  width: 35px;
+  height: 35px;
+  background: #8c8c8c2c;
+  margin-right: 5px;
+  color: #f2f2f2;
+}
+
+.diary-label-container {
+  display: flex;
+}
+
+.arrow-down-icon {
+  cursor: pointer;
 }
