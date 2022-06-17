@@ -24,7 +24,8 @@ function Diary() {
     const [diaryId, setDiaryId] = useState(0);
     const [diariesList, setDiariesList] = useState([]);
     const [diary, setDiary] = useState({});
-    const [isDisabled, setIsDisabled] = useState(true);
+    const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(true);
+    const [isDeleteBtnDisabled, setIsDeleteBtnDisabled] = useState(true);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
 
@@ -44,35 +45,25 @@ function Diary() {
 
     const handleLabelChange = (e) => {
         const currentLabel = e.currentTarget.value;
-        setIsDisabled(false);
+        setIsSaveBtnDisabled(false);
+        setIsDeleteBtnDisabled(false);
         setLabel(currentLabel);
     };
 
     const handleContentChange = (e) => {
         const currentContent = e.currentTarget.value;
-        setIsDisabled(false);
+        setIsSaveBtnDisabled(false);
+        setIsDeleteBtnDisabled(false);
         setContent(currentContent);
-    };
-
-    const handleNewDiary = (diaryId) => {
-        const today = new Date();
-        const date = (today.toLocaleString('en-us', { month: 'long' })) + ', ' + today.getFullYear();
-        let currentDiary = diariesList.find(diary => diary.id === diaryId);
-        const included = diariesList.includes(currentDiary);
-        if (diary.id === undefined || !included) {
-            setCreatedAt(date);
-            setDiaryId(diaryId + 1);
-            setDiary({
-                id: diaryId + 1,
-                label,
-                content,
-                createdAt: date
-            });
-        }
     };
 
     const handleSaveDiary = (e) => {
         let currentDiary;
+
+        if (!diariesList.length) {
+            handleCreateNewDiary(e);
+        };
+
         diariesList.map(diary => {
             if (diary.id === diaryId) {
                 currentDiary = {
@@ -81,17 +72,39 @@ function Diary() {
                     content,
                     createdAt
                 }
+                const currentDiaryIndex = diariesList.findIndex(diary => diary.id === diaryId);
+                diariesList.splice(currentDiaryIndex, 1, currentDiary);
+                
             }
-        });
-        const currentDiaryIndex = diariesList.findIndex(diary => diary.id === diaryId);
-        diariesList.splice(currentDiaryIndex, 1, currentDiary);
+        }); 
         setDiariesList([...diariesList])
-        // setDiariesList(previousDiariesList => [...previousDiariesList, currentDiary]);
-        // debugger
+        setIsSaveBtnDisabled(true);
     };
 
     const handleDeleteDiary = (e) => {
-        console.log('delete diary')
+        diariesList.map(diary => {
+            if (diary.id === diaryId) {
+                const currentDiaryIndex = diariesList.findIndex(diary => diary.id === diaryId);
+                setSelectedIndex(currentDiaryIndex);
+            }
+        }); 
+
+        // auto select next diary
+        if (selectedIndex === 0) {
+            setSelectedIndex(0);
+            diariesList.splice(selectedIndex, 1);
+        } else {
+            setSelectedIndex(selectedIndex - 1);
+        }
+
+        if (!diariesList.length) {
+            setContent('');
+            setLabel('');
+        };
+
+        diariesList.splice(selectedIndex, 1);
+        setDiariesList([...diariesList])
+        setIsSaveBtnDisabled(true);
     };
 
     const handleCreateNewDiary = (e) => {
@@ -101,8 +114,8 @@ function Diary() {
         setDiaryId(diaryId + 1);
         setDiary({
             id: diaryId + 1,
-            label: 'Diary Label',
-            content: 'New Diary...',
+            label: !label ? 'Diary Label' : label,
+            content: !content ? 'New Diary...' : content,
             createdAt: date
         });
     };
@@ -114,9 +127,11 @@ function Diary() {
         setLabel(diariesList[selectedIndex].label);
         setContent(diariesList[selectedIndex].content);
         setDiaryId(targetId);
+        setIsDeleteBtnDisabled(false);
     };
 
-    const buttonStyle = isDisabled ? 'button-inactive' : 'button';
+    const saveButtonStyle = isSaveBtnDisabled ? 'button-inactive' : 'button';
+    const deleteButtonStyle = isDeleteBtnDisabled ? 'button-inactive' : 'button';
 
     return (
         <div className="content">
@@ -139,10 +154,10 @@ function Diary() {
                         {/* <span className='material-icons md-18 arrow-down-icon' onClick={handleTitleOptions} hidden={true}>keyboard_arrow_down</span> */}
                     </div>
                     <div className='buttons-container'>
-                        <button className={`save-${buttonStyle}`} onClick={handleSaveDiary} disabled={isDisabled}>
+                        <button id="save-button" className={`save-${saveButtonStyle}`} onClick={handleSaveDiary} disabled={isSaveBtnDisabled}>
                             <span className='material-icons md-18'>save</span>
                         </button>
-                        <button className={`delete-${buttonStyle}`} onClick={handleDeleteDiary} disabled={isDisabled}>
+                        <button id="delete-button" className={`delete-${deleteButtonStyle}`} onClick={handleDeleteDiary} disabled={isDeleteBtnDisabled}>
                             <span className='material-icons md-18'>delete_outline</span>
                         </button>
                     </div>
