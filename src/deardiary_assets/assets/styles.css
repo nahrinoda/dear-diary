@@ -156,6 +156,7 @@ footer p {
   margin: 0 35px 0 6%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .diary-created-container {
@@ -237,4 +238,16 @@ footer p {
 
 .arrow-down-icon {
   cursor: pointer;
+}
+
+.dl-container {
+  overflow: auto;
+  scroll-behavior: smooth;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  height: -webkit-fill-available;
+}
+
+.dl-container::-webkit-scrollbar {
+  display: none;
 }

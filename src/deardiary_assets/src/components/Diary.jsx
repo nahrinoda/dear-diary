@@ -20,28 +20,24 @@ const DUMMY_LIST = [
 function Diary() {
     const [label, setLabel] = useState('');
     const [content, setContent] = useState('');
-    const [createdAt, setCreatedAt] = useState();
+    const [createdAt, setCreatedAt] = useState('');
     const [diaryId, setDiaryId] = useState(0);
-    const [diariesList, setDiariesList] = useState([]);
     const [diary, setDiary] = useState({});
+    const [diariesList, setDiariesList] = useState([]);
     const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(true);
     const [isDeleteBtnDisabled, setIsDeleteBtnDisabled] = useState(true);
     const [selectedIndex, setSelectedIndex] = useState(0);
 
-
     useEffect(() => {
-        const diaryIsCreated = Object.keys(diary).length;
-        if (diaryIsCreated > 0) {
-            setDiariesList(previousDiariesList => [diary, ...previousDiariesList]);
-        };
-    }, [diary])
+        fetchData();
+    }, []);
 
-    useEffect(() => {
-        if (diariesList.length > 0) {
-            setLabel(diariesList[selectedIndex].label);
-            setContent(diariesList[selectedIndex].content);
-        }
-    }, [selectedIndex])
+    const fetchData = async () => {
+        const diariesList = await deardiary.readDiaries();
+        console.log('fetch diariesList: ', diariesList)
+        setDiaryId(diariesList.length)
+        setDiariesList(diariesList);
+    };
 
     const handleLabelChange = (e) => {
         const currentLabel = e.currentTarget.value;
@@ -58,71 +54,80 @@ function Diary() {
     };
 
     const handleSaveDiary = (e) => {
-        let currentDiary;
-
         if (!diariesList.length) {
             handleCreateNewDiary(e);
+        } else {
+            setDiariesList(previousDiariesList => {
+                const currentDiaryId = Number(previousDiariesList[selectedIndex].id);
+                const today = new Date();
+                const date = (today.toLocaleString('en-us', { month: 'long' })) + ', ' + today.getFullYear();
+
+                let newDiary = {
+                    id: currentDiaryId,
+                    label: !label ? 'Diary Label' : label,
+                    content: !content ? 'New Diary...' : content,
+                    createdAt: date
+                };
+                setCreatedAt(date);
+                setDiaryId(currentDiaryId);
+                setDiary(newDiary);
+                setSelectedIndex(selectedIndex);
+                deardiary.removeDiaries(selectedIndex);
+                deardiary.createDiary(newDiary.id, newDiary.label, newDiary.content, newDiary.createdAt);
+                previousDiariesList.splice(selectedIndex, 1);
+                return [newDiary, ...previousDiariesList];
+            });
         };
 
-        diariesList.map(diary => {
-            if (diary.id === diaryId) {
-                currentDiary = {
-                    id: diaryId,
-                    label,
-                    content,
-                    createdAt
-                }
-                const currentDiaryIndex = diariesList.findIndex(diary => diary.id === diaryId);
-                diariesList.splice(currentDiaryIndex, 1, currentDiary);
-                
-            }
-        }); 
-        setDiariesList([...diariesList])
         setIsSaveBtnDisabled(true);
     };
 
     const handleDeleteDiary = (e) => {
-        diariesList.map(diary => {
-            if (diary.id === diaryId) {
-                const currentDiaryIndex = diariesList.findIndex(diary => diary.id === diaryId);
-                setSelectedIndex(currentDiaryIndex);
-            }
-        }); 
-
-        // auto select next diary
-        if (selectedIndex === 0) {
-            setSelectedIndex(0);
-            diariesList.splice(selectedIndex, 1);
-        } else {
-            setSelectedIndex(selectedIndex - 1);
+        deardiary.removeDiaries(selectedIndex);
+        setDiariesList(previousDiariesList => {
+            previousDiariesList.splice(selectedIndex, 1);
+            return previousDiariesList.filter((diary, index) => {
+                return previousDiariesList[index] !== selectedIndex
+            });
         }
+        );
 
         if (!diariesList.length) {
             setContent('');
             setLabel('');
         };
 
-        diariesList.splice(selectedIndex, 1);
-        setDiariesList([...diariesList])
+        const currentIndex = selectedIndex > 0 ? selectedIndex - 1 : 0;
+        setSelectedIndex(currentIndex)
         setIsSaveBtnDisabled(true);
     };
 
     const handleCreateNewDiary = (e) => {
         const today = new Date();
         const date = (today.toLocaleString('en-us', { month: 'long' })) + ', ' + today.getFullYear();
-        setCreatedAt(date);
-        setDiaryId(diaryId + 1);
-        setDiary({
-            id: diaryId + 1,
+        const currentDiaryId = Number(diaryId + 1);
+        let newDiary = {
+            id: currentDiaryId,
             label: !label ? 'Diary Label' : label,
             content: !content ? 'New Diary...' : content,
             createdAt: date
+        };
+
+        setCreatedAt(date);
+        setDiaryId(currentDiaryId);
+        setDiary(newDiary);
+
+        setDiariesList(previousDiariesList => {
+            deardiary.createDiary(newDiary.id, newDiary.label, newDiary.content, newDiary.createdAt);
+            return [newDiary, ...previousDiariesList];
         });
     };
 
     const selectDiary = (e) => {
         const targetId = Number(e.currentTarget.id);
-        const selectedIndex = diariesList.findIndex((diary) => diary.id === targetId);
+        const selectedIndex = diariesList.findIndex((diary) => Number(diary.id) === targetId);
+        console.log('selectedIndex: ', selectedIndex)
+        console.log('targetId: ', targetId)
         setSelectedIndex(selectedIndex);
         setLabel(diariesList[selectedIndex].label);
         setContent(diariesList[selectedIndex].content);
@@ -137,7 +142,7 @@ function Diary() {
         <div className="content">
             <LeftSidebar
                 handleCreateNewDiary={handleCreateNewDiary}
-                diariesList={diariesList}
+                diariesList={diariesList || []}
                 selectDiary={selectDiary}
                 selectedIndex={selectedIndex}
             />
