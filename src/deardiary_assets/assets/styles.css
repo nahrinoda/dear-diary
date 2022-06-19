@@ -41,13 +41,19 @@ header {
   height: 60px;
 }
 
-header h1 {
+.landing-page-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.header-title {
   font-weight: 300;
   margin-left: 6%;
   line-height: 60px;
   color: #8C8C8C;
   font-family: 'Dancing Script', cursive;
-  
 }
 
 .header-background {
@@ -60,6 +66,32 @@ header h1 {
   top: 36px;
   border-bottom: solid 1px #8C8C8C;
   z-index: -1;
+}
+
+.landing-page-header-box {
+  width: 850px;
+  height: 470px;
+  border-radius: 25px;
+  /* border: solid 1px #8C8C8C; */
+  z-index: -1;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 2px 20px 0 rgba(0, 0, 0, 0.18);
+}
+
+.diary-image {
+  opacity: 0.3;
+  border-radius: 25px;
+}
+
+.landing-page-header-title {
+  font-weight: 300;
+  margin-left: 6%;
+  line-height: 60px;
+  color: #8C8C8C;
+  font-family: 'Dancing Script', cursive;
+  position: absolute;
+  top: -35px;
 }
 
 footer {

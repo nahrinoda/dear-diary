@@ -2,20 +2,6 @@ import React, { useEffect, useState } from 'react';
 import LeftSidebar from './LeftSidebar';
 import { deardiary } from '../../../declarations/deardiary';
 
-const DUMMY_LIST = [
-    {
-        id: 1,
-        label: 'Heart and Souls',
-        content: 'I wanted to express my sinsere appologies...',
-        createdAt: 'July, 2021'
-    },
-    {
-        id: 2,
-        label: 'Bridges and Freedoms',
-        content: 'I wanted to express my freedoms and things...',
-        createdAt: 'July, 2021'
-    }
-]
 
 function Diary() {
     const [label, setLabel] = useState('');
@@ -34,7 +20,6 @@ function Diary() {
 
     const fetchData = async () => {
         const diariesList = await deardiary.readDiaries();
-        console.log('fetch diariesList: ', diariesList)
         setDiaryId(diariesList.length)
         setDiariesList(diariesList);
     };
@@ -126,8 +111,7 @@ function Diary() {
     const selectDiary = (e) => {
         const targetId = Number(e.currentTarget.id);
         const selectedIndex = diariesList.findIndex((diary) => Number(diary.id) === targetId);
-        console.log('selectedIndex: ', selectedIndex)
-        console.log('targetId: ', targetId)
+
         setSelectedIndex(selectedIndex);
         setLabel(diariesList[selectedIndex].label);
         setContent(diariesList[selectedIndex].content);

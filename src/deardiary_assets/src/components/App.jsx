@@ -3,15 +3,16 @@ import Header from './Header';
 import Footer from './Footer';
 import LeftSidebar from './LeftSidebar';
 import Diary from './Diary';
-
+import LandingPage from './LandingPage';
 
 
 function App() {
     return (
         <div>
-            <Header />
-            <Diary />
-            <Footer />
+            <LandingPage />
+            {/* <Header /> */}
+            {/* <Diary /> */}
+            {/* <Footer /> */}
         </div>
     );
 }
