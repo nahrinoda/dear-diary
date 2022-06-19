@@ -38,15 +38,28 @@ textarea {
 }
 
 header {
-  height: 44px;
-  border-bottom: solid 1px #F2F2F2;
+  height: 60px;
 }
 
-header h2 {
-  font-weight: 600;
+header h1 {
+  font-weight: 300;
   margin-left: 6%;
-  line-height: 44px;
+  line-height: 60px;
   color: #8C8C8C;
+  font-family: 'Dancing Script', cursive;
+  
+}
+
+.header-background {
+  background: #D9D6D2;
+}
+
+.header-line {
+  position: absolute;
+  width: 100%;
+  top: 36px;
+  border-bottom: solid 1px #8C8C8C;
+  z-index: -1;
 }
 
 footer {
