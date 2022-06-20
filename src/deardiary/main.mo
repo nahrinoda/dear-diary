@@ -10,7 +10,7 @@ actor DDiary {
     createdAt: Text;
   };
 
-  var diaries: List.List<Diary> = List.nil<Diary>();
+  stable var diaries: List.List<Diary> = List.nil<Diary>();
 
   public func createDiary(idNumber: Nat, labelText: Text, contentText: Text, dateText: Text) {
     let newDiary: Diary = {
