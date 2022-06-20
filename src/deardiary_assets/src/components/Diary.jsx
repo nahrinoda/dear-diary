@@ -94,8 +94,8 @@ function Diary() {
         const currentDiaryId = Number(diaryId + 1);
         let newDiary = {
             id: currentDiaryId,
-            label: !label ? 'Diary Label' : label,
-            content: !content ? 'New Diary...' : content,
+            label: 'Diary Label',
+            content: 'New Diary...',
             createdAt: date
         };
 
