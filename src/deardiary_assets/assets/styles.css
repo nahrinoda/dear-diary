@@ -25,6 +25,11 @@ div:focus, input:focus, textarea:focus, select:focus{
   outline: none;
 }
 
+a {
+  text-decoration: none;
+  color: #8C8C8C;
+}
+
 textarea {
   resize: none;
   box-sizing: border-box; 
@@ -335,10 +340,11 @@ footer p {
 .start-creating {
   cursor: pointer;
   text-transform: uppercase;
-  margin-top: 10px;
+  margin-top: 15px;
   font-weight: 800;
   display: flex;
   align-items: center;
+  color: #8C8C8C;
 }
 
 .start-creating:hover {
@@ -347,4 +353,29 @@ footer p {
 
 .start-creating span {
   margin-left: 8px;
+}
+
+.landing-page-topbar {
+  position: absolute;
+  text-align: right;
+  width: 850px;
+  top: 30px;
+  display: flex;
+  justify-content: end;
+  left: 50%;
+  transform: translate(-50%);
+}
+
+.landing-page-links {
+  margin-left: 20px;
+  border: 1px solid transparent;
+  color: #8C8C8C;
+  border-radius: 20px;
+  padding: 4px 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.landing-page-links:hover {
+  border: 1px solid #8C8C8C;
 }

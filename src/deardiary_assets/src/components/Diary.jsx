@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import LeftSidebar from './LeftSidebar';
 import { deardiary } from '../../../declarations/deardiary';
+import Header from './Header';
 
 
 function Diary() {
@@ -123,43 +124,46 @@ function Diary() {
     const deleteButtonStyle = isDeleteBtnDisabled ? 'button-inactive' : 'button';
 
     return (
-        <div className="content">
-            <LeftSidebar
-                handleCreateNewDiary={handleCreateNewDiary}
-                diariesList={diariesList || []}
-                selectDiary={selectDiary}
-                selectedIndex={selectedIndex}
-            />
-            <div className="diary">
-                <div className='diary-controls'>
-                    <div className='diary-label-container'>
-                        <input
-                            className='label'
-                            name='label'
-                            placeholder='Diary Label'
-                            value={label}
-                            onChange={handleLabelChange}
-                        />
-                        {/* <span className='material-icons md-18 arrow-down-icon' onClick={handleTitleOptions} hidden={true}>keyboard_arrow_down</span> */}
-                    </div>
-                    <div className='buttons-container'>
-                        <button id="save-button" className={`save-${saveButtonStyle}`} onClick={handleSaveDiary} disabled={isSaveBtnDisabled}>
-                            <span className='material-icons md-18'>save</span>
-                        </button>
-                        <button id="delete-button" className={`delete-${deleteButtonStyle}`} onClick={handleDeleteDiary} disabled={isDeleteBtnDisabled}>
-                            <span className='material-icons md-18'>delete_outline</span>
-                        </button>
-                    </div>
-                </div>
-                <textarea
-                    className='diary-content'
-                    name='content'
-                    placeholder='Start writting your thoughts here...'
-                    value={content}
-                    onChange={handleContentChange}
+        <>
+            <Header />
+            <div className="content">
+                <LeftSidebar
+                    handleCreateNewDiary={handleCreateNewDiary}
+                    diariesList={diariesList || []}
+                    selectDiary={selectDiary}
+                    selectedIndex={selectedIndex}
                 />
+                <div className="diary">
+                    <div className='diary-controls'>
+                        <div className='diary-label-container'>
+                            <input
+                                className='label'
+                                name='label'
+                                placeholder='Diary Label'
+                                value={label}
+                                onChange={handleLabelChange}
+                            />
+                            {/* <span className='material-icons md-18 arrow-down-icon' onClick={handleTitleOptions} hidden={true}>keyboard_arrow_down</span> */}
+                        </div>
+                        <div className='buttons-container'>
+                            <button id="save-button" className={`save-${saveButtonStyle}`} onClick={handleSaveDiary} disabled={isSaveBtnDisabled}>
+                                <span className='material-icons md-18'>save</span>
+                            </button>
+                            <button id="delete-button" className={`delete-${deleteButtonStyle}`} onClick={handleDeleteDiary} disabled={isDeleteBtnDisabled}>
+                                <span className='material-icons md-18'>delete_outline</span>
+                            </button>
+                        </div>
+                    </div>
+                    <textarea
+                        className='diary-content'
+                        name='content'
+                        placeholder='Start writting your thoughts here...'
+                        value={content}
+                        onChange={handleContentChange}
+                    />
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 
