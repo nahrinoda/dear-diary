@@ -297,6 +297,7 @@ footer p {
 
 .left-sidebar-content-id {
   width: 35px;
+  min-width: 35px;
   height: 35px;
   background: #8c8c8c2c;
   margin-right: 5px;
