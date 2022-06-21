@@ -1,0 +1,7 @@
+type NFT = 
+ service {
+   getContent: () -> (text) query;
+   getLabel: () -> (text) query;
+   getOwner: () -> (principal) query;
+ };
+service : (text, principal, text) -> NFT

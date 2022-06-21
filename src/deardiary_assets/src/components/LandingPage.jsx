@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import clouds from '../../assets/clouds.png';
 import diaries from '../../assets/diaries.png';
-import Diary from './Diary';
 import Footer from './Footer';
 
 

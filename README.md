@@ -18,10 +18,16 @@ dfx start --background
 npm install
 
 # Deploys your canisters to the replica and generates your candid interface
-dfx deploy
+dfx deploy deardiary
 
 # start a development server with
 npm start
 ```
 
-Which will start a server at `http://localhost:8080`, proxying API requests to the replica at port 8000.
+## To deploy NFT canister locally
+
+```
+let <YOUR OWN PRINCIPAL> = dfx identity get-principal
+
+dfx deploy --argument='("On a summer day!", principal "<YOUR OWN PRINCIPAL>", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")'
+```

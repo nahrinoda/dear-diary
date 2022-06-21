@@ -4,6 +4,10 @@
       "main": "src/deardiary/main.mo",
       "type": "motoko"
     },
+    "nft": {
+      "main": "src/NFT/nft.mo",
+      "type": "motoko"
+    },
     "deardiary_assets": {
       "dependencies": [
         "deardiary"
