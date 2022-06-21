@@ -1,24 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Footer from './Footer';
+import Header from './Header';
 
 
 function Gallery() {
     return (
         <>
-            <div className="landing-page-topbar">
-                <Link to="/discover">
-                    <div className="landing-page-links">Discover</div>
-                </Link>
-                <Link to="/create">
-                    <div className="landing-page-links">Create</div>
-                </Link>
-                <Link to="/collection">
-                    <div className="landing-page-links">My NFTs</div>
-                </Link>
-            </div>
+            <Header />
             <div className="landing-page-container">
-                <h1>Gallery</h1>
+                <h1>My NFTs</h1>
             </div>
             <Footer />
         </>

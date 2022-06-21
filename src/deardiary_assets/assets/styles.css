@@ -62,13 +62,22 @@ header {
 
 .header-title {
   font-weight: 300;
-  margin-left: 6%;
+  margin: 0 6%;
   line-height: 60px;
   color: #8C8C8C;
   font-family: 'Dancing Script', cursive;
+  display: flex;
+  justify-content: space-between;
 }
 
-.header-background {
+.right-side-header {
+  display: flex;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+}
+
+.header-background,
+.landing-page-links {
   background: #D9D6D2;
 }
 
@@ -369,13 +378,14 @@ footer p {
 }
 
 .landing-page-links {
-  margin-left: 20px;
+  margin: 22px 10px;
   border: 1px solid transparent;
   color: #8C8C8C;
   border-radius: 20px;
   padding: 4px 8px;
   cursor: pointer;
   text-decoration: none;
+  line-height: 16px;
 }
 
 .landing-page-links:hover {
