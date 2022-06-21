@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import App from "./components/App";
 import { Principal } from "@dfinity/principal";
 
-const CURRENT_USER_ID = Principal.fromText("dummy-user-for-now");
+const CURRENT_USER_ID = Principal.fromText("vbekf-a2erf-ornoq");
 export default CURRENT_USER_ID;
 
 const init = async () => {
