@@ -30,4 +30,6 @@ npm start
 let <YOUR OWN PRINCIPAL> = dfx identity get-principal
 
 dfx deploy --argument='("On a summer day!", principal "<YOUR OWN PRINCIPAL>", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")'
+
+npm start
 ```
