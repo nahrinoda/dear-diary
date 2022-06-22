@@ -438,3 +438,12 @@ footer p {
   padding-left: 6%;
   columns: #8C8C8C;
 }
+
+.card-title,
+.card-owner {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  text-align: initial;
+}

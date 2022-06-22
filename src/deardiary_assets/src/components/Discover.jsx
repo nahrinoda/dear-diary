@@ -4,6 +4,7 @@ import Header from './Header';
 
 
 function Discover() {
+
     return (
         <>
             <Header />
