@@ -8,7 +8,7 @@ import Card from './Card';
 
 
 function Diary() {
-    let navigate = useNavigate(); 
+    let navigate = useNavigate();
 
     const [label, setLabel] = useState('');
     const [content, setContent] = useState('');
@@ -176,7 +176,12 @@ function Diary() {
             {
                 showModal && (
                     <div className='minting-modal' onClick={closeModal}>
-                        {nftPrincipal !== "" && <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} />}
+                        {nftPrincipal !== "" && (
+                            <>
+                                <h2 className="minted-success">MINTED!</h2>
+                                <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} />
+                            </>
+                        )}
                         {showLoader && (
                             <div className="lds-ellipsis">
                                 <div></div>
@@ -188,7 +193,6 @@ function Diary() {
                     </div>
                 )
             }
-
             <div className="content">
                 <LeftSidebar
                     handleCreateNewDiary={handleCreateNewDiary}

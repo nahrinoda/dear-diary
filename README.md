@@ -29,7 +29,7 @@ npm start
 ```
 let <YOUR OWN PRINCIPAL> = dfx identity get-principal
 
-dfx deploy --argument='("On a summer day!", principal "vwzf7-cgzpz-vmfqd-apotu-qgi6y-swyq6-bfgtq-w2oz6-2fkz4-qcgxd-gqe", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")'
+dfx deploy --argument='("On a summer day!", principal "<YOUR OWN PRINCIPAL>", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")'
 
 replace NFTID = dfx canister id nft 
 
