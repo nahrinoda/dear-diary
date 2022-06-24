@@ -1,5 +1,8 @@
+import Cycles "mo:base/ExperimentalCycles";
 import List "mo:base/List";
 import Debug "mo:base/Debug";
+import Principal "mo:base/Principal";
+import NFTActorClass "../NFT/nft";
 
 actor DDiary {
 
@@ -36,5 +39,17 @@ actor DDiary {
     diaries := List.append(listFront, listBack);
     //  Debug.print(debug_show(diaries))
   }; 
+
+  public shared(msg) func mint(name: Text, content: Text) : async Principal {
+    let owner: Principal = msg.caller;
+
+    Debug.print(debug_show(Cycles.balance()));
+    Cycles.add(100_500_000_000);
+    let newNFT = await NFTActorClass.NFT(name, owner, content);
+    Debug.print(debug_show(Cycles.balance()));
+    let newNFTPrincipal = await newNFT.getCanisterId();
+
+    return newNFTPrincipal
+  };
 
 }

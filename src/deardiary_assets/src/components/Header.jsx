@@ -17,7 +17,7 @@ function Header() {
                         <div className="landing-page-links">Create</div>
                     </Link>
                     <Link to="/collection">
-                        <div className="landing-page-links">My NFTs</div>
+                        <div id="my-collection" className="landing-page-links">My NFTs</div>
                     </Link>
                 </div>
             </h1>

@@ -3,7 +3,7 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from '../../../declarations/nft';
 import { Principal } from '@dfinity/principal';
 
-function Card({ id }) {
+function Card({ id, handleCardOnClick }) {
     const [label, setLabel] = useState();
     const [owner, setOwner] = useState();
     const [content, setContent] = useState();
@@ -36,7 +36,7 @@ function Card({ id }) {
     }, []);
 
     return (
-        <div className="card-container">
+        <div className="card-container" onClick={handleCardOnClick}>
             <div className="card-content">
                 {content}
             </div>

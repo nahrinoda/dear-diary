@@ -11,6 +11,7 @@ export const idlFactory = ({ IDL }) => {
         [],
         ['oneway'],
       ),
+    'mint' : IDL.Func([IDL.Text, IDL.Text], [IDL.Principal], []),
     'readDiaries' : IDL.Func([], [IDL.Vec(Diary)], ['query']),
     'removeDiaries' : IDL.Func([IDL.Nat], [], ['oneway']),
   });

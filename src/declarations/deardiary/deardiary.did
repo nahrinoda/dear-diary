@@ -7,6 +7,7 @@ type Diary =
  };
 service : {
   createDiary: (nat, text, text, text) -> () oneway;
+  mint: (text, text) -> (principal);
   readDiaries: () -> (vec Diary) query;
   removeDiaries: (nat) -> () oneway;
 }

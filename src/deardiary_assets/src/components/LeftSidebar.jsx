@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { Principal } from '@dfinity/principal';
 
 function LeftSidebar({
     handleCreateNewDiary,
     diariesList,
     selectDiary,
-    selectedIndex
+    selectedIndex,
+    mintIsHidden,
+    handleMintDiaryOnClick
 }) {
     const [diariesGroupedByCreatedBy, setDiariesGroupedByCreatedBy] = useState([]);
 
     useEffect(() => {
-        const currentDiariesGroupedByCreatedBy =  diariesList.reduce((previousDiary, currentDiary) => {
+        const currentDiariesGroupedByCreatedBy = diariesList.reduce((previousDiary, currentDiary) => {
             previousDiary[currentDiary.createdAt] = previousDiary[currentDiary.createdAt] || [];
             previousDiary[currentDiary.createdAt].push(currentDiary);
             return previousDiary;
@@ -17,7 +20,6 @@ function LeftSidebar({
 
         setDiariesGroupedByCreatedBy(currentDiariesGroupedByCreatedBy);
     }, [diariesList]);
-
 
     return (
         <div className='left-sidebar'>
@@ -34,17 +36,21 @@ function LeftSidebar({
                         <span>{`(${item[1].length})`}</span>
                     </dt>
                     {item[1].map((diary, index) => (
-                        <dd 
-                            className={'left-sidebar-item'} 
-                            key={index} 
-                            id={Number(diary.id)} 
-                            onClick={selectDiary}
-                            style={{background: item[1].indexOf(diary) === selectedIndex ? '#8c8c8c3e' : null}}
+                        <dd
+                            className="left-sidebar-item"
+                            key={index}
+                            id={Number(diary.id)}
+                            style={{ background: item[1].indexOf(diary) === selectedIndex ? '#8c8c8c3e' : null }}
                         >
                             <div className='left-sidebar-content-id'>{Number(diary.id)}</div>
-                            <div className='left-sidebar-content'>{diary.content}</div>
+                            <div
+                                id={Number(diary.id)}
+                                className='left-sidebar-content'
+                                onClick={selectDiary}
+                            >{diary.content}</div>
+                            <div className='left-sidebar-content-mint' onClick={handleMintDiaryOnClick} hidden={mintIsHidden}>M</div>
                         </dd>
-                    )) }
+                    ))}
                 </dl>
             ))}
         </div>
