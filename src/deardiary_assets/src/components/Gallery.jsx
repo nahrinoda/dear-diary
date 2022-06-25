@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Card from './Card';
 import Footer from './Footer';
 import Header from './Header';
+import { Principal } from "@dfinity/principal";
 
 
-function Gallery() {
+function Gallery({ ids }) {
+    const [items, setItems] = useState();
 
-    const NFTID = 'r7inp-6aaaa-aaaaa-aaabq-cai';
+    const fetchNFTs = () => {
+        if (ids != undefined) {
+            setItems(ids.map((NFTID) => <Card key={NFTID.toText()} id={NFTID} />));
+        };
+    };
+
+    useEffect(() => {
+        fetchNFTs();
+    }, []);
 
     return (
         <>
@@ -14,7 +24,7 @@ function Gallery() {
             <div className="gallery-page-container">
                 <h2 className="my-nft-title">My NFTs</h2>
                 <div className="my-nft-collection">
-                    <Card id={NFTID} />
+                    {items}
                 </div>
             </div>
         </>

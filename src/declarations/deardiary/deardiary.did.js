@@ -11,6 +11,11 @@ export const idlFactory = ({ IDL }) => {
         [],
         ['oneway'],
       ),
+    'getOwnedNFTs' : IDL.Func(
+        [IDL.Principal],
+        [IDL.Vec(IDL.Principal)],
+        ['query'],
+      ),
     'mint' : IDL.Func([IDL.Text, IDL.Text], [IDL.Principal], []),
     'readDiaries' : IDL.Func([], [IDL.Vec(Diary)], ['query']),
     'removeDiaries' : IDL.Func([IDL.Nat], [], ['oneway']),

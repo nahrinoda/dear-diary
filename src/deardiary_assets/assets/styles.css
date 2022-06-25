@@ -413,6 +413,7 @@ footer p {
   padding: 10px;
   border-radius: 4px;
   margin: 5px;
+  cursor: pointer;
 }
 
 .card-content {
@@ -434,6 +435,7 @@ footer p {
 .my-nft-collection {
   display: flex;
   margin-left: 6%;
+  flex-wrap: wrap;
 }
 
 .gallery-page-container {

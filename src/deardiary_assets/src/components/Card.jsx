@@ -8,7 +8,7 @@ function Card({ id, handleCardOnClick }) {
     const [owner, setOwner] = useState();
     const [content, setContent] = useState();
 
-    const currentId = Principal.fromText(id);
+    const currentId = id;
 
     const localHost = "http://localhost:8080/";
     const agent = new HttpAgent({ host: localHost });
