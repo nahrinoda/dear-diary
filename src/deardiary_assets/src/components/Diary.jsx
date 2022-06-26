@@ -20,7 +20,6 @@ function Diary() {
     const [isDeleteBtnDisabled, setIsDeleteBtnDisabled] = useState(true);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isMintButtonHidden, setIsMintButtonHidden] = useState(true);
-    const [mintedDiariesList, setMintedDiariesList] = useState([]);
     const [nftPrincipal, setNftPrincipal] = useState('');
     const [showLoader, setShowLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -135,11 +134,6 @@ function Diary() {
     const handleMintDiaryOnClick = async (e) => {
         setShowModal(true);
         setShowLoader(true);
-        // Save the minted diary in a new list
-        const mintedDiary = {
-            label: diariesList[selectedIndex].label,
-            content: diariesList[selectedIndex].content,
-        };
 
         const name = diariesList[selectedIndex].label;
         const content = diariesList[selectedIndex].content
@@ -148,12 +142,6 @@ function Diary() {
         setNftPrincipal(newNFTID);
 
         deardiary.removeDiaries(selectedIndex);
-
-        setMintedDiariesList(previousMintedDiaries => {
-            // TODO: build back-end and pull it to Gallery
-            return [mintedDiary, ...previousMintedDiaries];
-        });
-
         setShowLoader(false);
     };
 
@@ -179,7 +167,7 @@ function Diary() {
                         {nftPrincipal !== "" && (
                             <>
                                 <h2 className="minted-success">MINTED!</h2>
-                                <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} />
+                                <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} cardStyle={{cursor: "pointer"}} />
                             </>
                         )}
                         {showLoader && (

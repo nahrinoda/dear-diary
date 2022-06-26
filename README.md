@@ -2,6 +2,7 @@
 
 Welcome to **Dear Diary** project and to the internet computer development community. This application is not deployed yet and you might want to run it locally.
 
+[![Watch the video](https://i9.ytimg.com/vi/8ek-Ta078fI/mq1.jpg?sqp=CPDJ45UG&rs=AOn4CLBBHBHEMfS7dz7hjqg0yMeSuhkxHg)](https://youtu.be/8ek-Ta078fI)
 
 ## Running the project locally
 

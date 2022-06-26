@@ -8,15 +8,15 @@ import { Principal } from "@dfinity/principal";
 function Gallery({ ids }) {
     const [items, setItems] = useState();
 
+    useEffect(() => {
+        fetchNFTs();
+    }, []);
+
     const fetchNFTs = () => {
         if (ids != undefined) {
             setItems(ids.map((NFTID) => <Card key={NFTID.toText()} id={NFTID} />));
         };
     };
-
-    useEffect(() => {
-        fetchNFTs();
-    }, []);
 
     return (
         <>

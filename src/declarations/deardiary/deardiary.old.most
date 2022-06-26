@@ -1,6 +1,0 @@
-// Version: 1.0.0
-type Diary = {content : Text; createdAt : Text; diaryLabel : Text; id : Nat};
-type List<T> = ?(T, List<T>);
-actor {
-  stable var diaries : ?(Diary, List<Diary>)
-};

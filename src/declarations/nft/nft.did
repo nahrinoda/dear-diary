@@ -4,5 +4,6 @@ type NFT =
    getContent: () -> (text) query;
    getLabel: () -> (text) query;
    getOwner: () -> (principal) query;
+   transferOwnership: (principal) -> (text);
  };
 service : (text, principal, text) -> NFT

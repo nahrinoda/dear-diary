@@ -42,7 +42,8 @@ textarea {
   background: none;
 }
 
-.label {
+.label,
+.nft-price {
   border: none;
   background: transparent;
   padding: 0;
@@ -50,6 +51,17 @@ textarea {
   font-size: 1.1em;
   font-weight: bold;
   font-family: 'Open Sans', sans-serif;
+}
+
+.nft-price {
+  font-weight: 300;
+  font-size: 16px;
+  width: 100%;
+}
+
+.nft-price-container {
+  width: 100%;
+  display: flex;
 }
 
 header {
@@ -153,7 +165,9 @@ footer p {
   margin: 25px 0;
 }
 
-.left-sidebar-controls {
+.left-sidebar-controls,
+.sell-confirm-button,
+.listed-banner {
   display: flex;
   justify-content: center;
   height: 45px;
@@ -166,6 +180,25 @@ footer p {
   text-align: center;
   border-radius: 5px;
   cursor: pointer;
+}
+
+.listed-banner {
+  border: solid 1px #8C8C8C;
+  background: #8C8C8C;
+  cursor: none;
+  margin: 0;
+}
+
+.card-buttons-container {
+  display: flex;
+  justify-content: end;
+  flex-direction: column;
+}
+
+.sell-confirm-button {
+  font-size: 18px;
+  height: 38px;
+  margin: 12px 0 0;
 }
 
 .buttons-container {
@@ -228,7 +261,8 @@ footer p {
   align-self: end;
 }
 
-.left-sidebar-controls:hover {
+.left-sidebar-controls:hover,
+.sell-confirm-button:hover {
   opacity: 0.5;
 }
 
@@ -408,17 +442,17 @@ footer p {
 
 .card-container {
   width: 300px;
-  height: 300px;
   background: #F2F2F2;
   padding: 10px;
   border-radius: 4px;
   margin: 5px;
-  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .card-content {
-  /* width: 100%; */
-  height: 80%;
+  height: 300px;
   color: #3E3E40;
   border: solid 2px #D9D6D2;
   overflow: auto;
@@ -428,13 +462,14 @@ footer p {
   box-shadow: 0px 2px 20px 0 rgba(0, 0, 0, 0.18);
 }
 
-.card-title {
+.card-title,
+.card-owner {
   margin: 8px 0;
 }
 
 .my-nft-collection {
   display: flex;
-  margin-left: 6%;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -442,16 +477,15 @@ footer p {
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  padding: 20px 0;
   overflow: hidden;
 }
 
 .my-nft-title {
   width: 100%;
   margin-bottom: 10px;
-  margin-left: 5px;
-  padding-left: 6%;
-  columns: #8C8C8C;
+  color: #8C8C8C;
+  text-align: center;
 }
 
 .card-title,
@@ -470,7 +504,7 @@ footer p {
 
 .minting-modal {
   position: absolute;
-  background: #8c8c8c68;
+  background: #8c8c8c76;
   top: 0;
   left: 0;
   bottom: 0;
