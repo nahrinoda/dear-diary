@@ -2,9 +2,12 @@
 
 Welcome to **Dear Diary** project and to the internet computer development community. This application is not deployed yet and you might want to run it locally.
 
-[![Watch the video](https://i9.ytimg.com/vi/8ek-Ta078fI/mq1.jpg?sqp=CPDJ45UG&rs=AOn4CLBBHBHEMfS7dz7hjqg0yMeSuhkxHg)](https://youtu.be/8ek-Ta078fI)
+
 
 ## Running the project locally
+
+https://user-images.githubusercontent.com/32439687/175837709-9519a4d2-3483-4958-ad04-b20cafeba0a7.mp4
+
 
 You can use the following commands:
 
