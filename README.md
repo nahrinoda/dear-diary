@@ -4,6 +4,10 @@ Welcome to **Dear Diary** project and to the internet computer development commu
 
 
 
+https://user-images.githubusercontent.com/32439687/175838012-58fc740d-4be1-40e4-a5c4-e32c6ff3bfc4.mp4
+
+
+
 ## Running the project locally
 
 You can use the following commands:
