@@ -6,9 +6,6 @@ Welcome to **Dear Diary** project and to the internet computer development commu
 
 ## Running the project locally
 
-https://user-images.githubusercontent.com/32439687/175837709-9519a4d2-3483-4958-ad04-b20cafeba0a7.mp4
-
-
 You can use the following commands:
 
 ```bash
