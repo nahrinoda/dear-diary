@@ -34,7 +34,33 @@ npm start
 ```
 let <YOUR OWN PRINCIPAL> = dfx identity get-principal
 
-dfx deploy --argument='("On a summer day!", principal "<YOUR OWN PRINCIPAL>", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")'
+dfx deploy --argument='("On a summer day!", principal "vwzf7-cgzpz-vmfqd-apotu-qgi6y-swyq6-bfgtq-w2oz6-2fkz4-qcgxd-gqe", "Lorem Ipsum is simply dummy text of the printing and typesetting industry.")'
 
 npm start
+```
+
+# Creating NFT for Testing
+
+1. Mint an NFT on the command line to get NFT into mapOfNFTs:
+
+```
+dfx canister call deardiary mint '("Kahlil Gibran", "I have found both freedom and safety in my madness; the freedom of loneliness and the safety from being understood, for those who understand us enslave something in us")'
+```
+
+2. List the item into mapOfListings:
+
+```
+dfx canister call deardiary listItem '(principal "rdmx6-jaaaa-aaaaa-aaadq-cai", 2)'
+```
+
+3. Get OpenD canister ID:
+
+```
+dfx canister id deardiary
+```
+
+4. Transfer NFT to OpenD:
+
+```
+dfx canister call q3fc5-haaaa-aaaaa-aaahq-cai transferOwnership '(principal "rrkah-fqaaa-aaaaa-aaaaq-cai", true)'
 ```

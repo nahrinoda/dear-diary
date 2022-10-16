@@ -3,13 +3,15 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from '../../../declarations/nft';
 import { deardiary } from '../../../declarations/deardiary';
 import { Principal } from '@dfinity/principal';
+import CURRENT_USER_ID from '../index';
 
-function Card({ id, handleCardOnClick, cardStyle }) {
+function Card({ id, handleCardOnClick, cardStyle, role }) {
     const [label, setLabel] = useState();
     const [owner, setOwner] = useState();
     const [content, setContent] = useState();
     const [button, setButton] = useState();
     const [priceInput, setPriceInput] = useState();
+    const [priceListing, setPriceListing] = useState();
     const [blur, setBlur] = useState();
 
     const currentId = id;
@@ -36,15 +38,46 @@ function Card({ id, handleCardOnClick, cardStyle }) {
         const content = await NFTActor.getContent();
         setContent(content);
 
-        const nftIsListed = await deardiary.isListed(id);
+        if (role === "collection") {
+            const nftIsListed = await deardiary.isListed(id);
 
-        if (nftIsListed) {
-            setOwner("DearDiary");
-            setBlur({ filter: "blur(2px)" });
-            setButton(<div className="listed-banner">LISTED</div>);
-        } else {
-            setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
-        };
+            if (nftIsListed) {
+                setOwner("DearDiary");
+                setBlur({ filter: "blur(2px)" });
+                setButton(<div className="listed-banner">LISTED</div>);
+            } else {
+                setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
+            };
+
+        } else if (role === "discover") {
+            const originalOwner = await deardiary.getOriginalOwner(id);
+            if (originalOwner.toText() !== CURRENT_USER_ID.toText()) {
+                setButton(<button onClick={handleBuy} className="sell-confirm-button">Buy</button>);
+            } else {
+                setButton(<div className="listed-banner">You own this NFT</div>);
+            }
+
+            const price = await deardiary.getListedNFTPrice(id);
+            
+            setPriceListing(
+                <div className="card-listing">
+                    <b className="add-margin">Price: </b>
+                    {price.toString()}
+                    <span className="material-icons md-18">currency_bitcoin</span>
+                </div>
+            );
+        } else if (role === "diaries") {
+            const nftIsListed = await deardiary.isListed(id);
+
+            if (nftIsListed) {
+                setOwner("DearDiary");
+                setBlur({ filter: "blur(2px)" });
+                setButton(<div className="listed-banner">LISTED</div>);
+            } else {
+                setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
+            };
+
+        } 
     };
 
     useEffect(() => {
@@ -73,10 +106,14 @@ function Card({ id, handleCardOnClick, cardStyle }) {
                 />
             </div>
         );
-        setButton(<button onClick={handleSellNFT} className="sell-confirm-button">Confirm</button>)
+        setButton(<button onClick={handleSell} className="sell-confirm-button">Confirm</button>)
     };
 
-    const handleSellNFT = async (e) => {
+    const handleBuy = async (e) => {
+        console.log('Buy NFT')
+    };
+
+    const handleSell = async (e) => {
         setBlur({ filter: "blur(2px)" });
         setButton(
             <button className="sell-confirm-button">
@@ -103,12 +140,13 @@ function Card({ id, handleCardOnClick, cardStyle }) {
     return (
         <div className="card-container" onClick={handleCardOnClick} style={cardStyle}>
             <div>
-                
+
                 <div className="card-content" style={blur}>
                     {content}
                 </div>
                 <div className="card-title"><b>Title: </b>{label}</div>
                 <div className="card-owner"><b>Owner: </b>{owner}</div>
+                {priceListing}
             </div>
             <div className="card-buttons-container">
                 {priceInput}

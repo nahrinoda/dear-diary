@@ -59,9 +59,18 @@ textarea {
   width: 100%;
 }
 
-.nft-price-container {
+.nft-price-container,
+.nft-listed-price-container {
   width: 100%;
   display: flex;
+  align-items: center;
+  line-height: 18px;
+}
+
+.nft-listed-price-container {
+  color: #5bc0de;
+  border: solid 1px #5bc0de;
+  text-align: center;
 }
 
 header {
@@ -157,15 +166,12 @@ footer p {
 
 .content {
   position: absolute;
-  display: flex;
   width: 100%;
   height: 85%;
-  /* border: dotted 1px red; */
-  flex-direction: row;
   margin: 25px 0;
 }
 
-.left-sidebar-controls,
+.add-new-diary-button,
 .sell-confirm-button,
 .listed-banner {
   display: flex;
@@ -175,11 +181,12 @@ footer p {
   background: #5bc0de;
   color: #F2F2F2;
   margin-bottom: 10px;
-  width: 100%;
   align-items: center;
   text-align: center;
   border-radius: 5px;
   cursor: pointer;
+  width: 300px;
+  min-width: 300px;
 }
 
 .listed-banner {
@@ -207,8 +214,7 @@ footer p {
 
 .save-button,
 .delete-button,
-.save-button-inactive,
-.delete-button-inactive {
+.save-button-inactive {
   width: 30px;
   height: 30px;
   border-radius: 15px;
@@ -226,19 +232,21 @@ footer p {
 }
 
 .delete-button {
-  border: solid 1px #DE5B5B;
-  background: #DE5B5B;
-  color: #F2F2F2;
+  border: solid 1px #8C8C8C;
+  color: #8C8C8C;
   cursor: pointer;
 }
 
-.save-button:hover,
 .delete-button:hover {
+  border: solid 1px #DE5B5B;
+  color: #DE5B5B;
+}
+
+.save-button:hover {
   opacity: 0.5;
 }
 
-.save-button-inactive,
-.delete-button-inactive {
+.save-button-inactive {
   background: #8c8c8c2c;
   border: solid 1px #8c8c8c2c;
   color: #f2f2f2;
@@ -261,19 +269,9 @@ footer p {
   align-self: end;
 }
 
-.left-sidebar-controls:hover,
+.add-new-diary-button:hover,
 .sell-confirm-button:hover {
   opacity: 0.5;
-}
-
-.left-sidebar {
-  /* border: dotted 1px orange; */
-  width: 300px;
-  min-width: 300px;
-  margin: 0 35px 0 6%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
 }
 
 .diary-created-container {
@@ -295,8 +293,8 @@ footer p {
   box-shadow: 0px 2px 20px 0 rgba(0, 0, 0, 0.18);
   width: 70%;
   height: 100%;
-  margin-right: 6%;
   overflow: hidden;
+  margin: auto;
 }
 
 .diary-controls {
@@ -467,10 +465,25 @@ footer p {
   margin: 8px 0;
 }
 
+.diaries-collection {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: absolute;
+  overflow-y: auto;
+  height: 100%;
+}
+
 .my-nft-collection {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
+}
+
+.diaries-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .gallery-page-container {
@@ -489,12 +502,18 @@ footer p {
 }
 
 .card-title,
-.card-owner {
+.card-owner,
+.card-listing {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
   text-align: initial;
+}
+
+.card-listing {
+  display: flex;
+  align-items: center;
 }
 
 .left-sidebar-item-diabled {

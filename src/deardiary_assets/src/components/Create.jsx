@@ -1,28 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import LeftSidebar from './LeftSidebar';
+import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import debounce from 'lodash/debounce';
+import MyDiaries from './MyDiaries';
+import Card from './Card';
 import { deardiary } from '../../../declarations/deardiary';
 import { useNavigate } from "react-router-dom";
 import { Principal } from '@dfinity/principal';
 import Header from './Header';
-import Card from './Card';
 
 
-function Diary() {
+function Create() {
     let navigate = useNavigate();
 
-    const [label, setLabel] = useState('');
-    const [content, setContent] = useState('');
-    const [createdAt, setCreatedAt] = useState('');
+    const [label, setLabel] = useState();
+    const [content, setContent] = useState();
     const [diaryId, setDiaryId] = useState(0);
-    const [diary, setDiary] = useState({});
     const [diariesList, setDiariesList] = useState([]);
     const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(true);
+    const [isCreateBtnDisabled, setIsCreateBtnDisabled] = useState(true);
     const [isDeleteBtnDisabled, setIsDeleteBtnDisabled] = useState(true);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isMintButtonHidden, setIsMintButtonHidden] = useState(true);
     const [nftPrincipal, setNftPrincipal] = useState('');
     const [showLoader, setShowLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [diary, setDiary] = useState();
+    const [createButtonShowing, setCreateButtonShowing] = useState(true);
+    const [isNewDiary, setIsNewDiary] = useState(true);
+
+    const inputLabel = useRef(null);
+    const inputContent = useRef(null);
 
     useEffect(() => {
         fetchData();
@@ -30,25 +36,35 @@ function Diary() {
 
     const fetchData = async () => {
         const diariesList = await deardiary.readDiaries();
+        console.log('diariesList: ', diariesList)
         setDiaryId(diariesList.length)
         setDiariesList(diariesList);
     };
 
-    const handleLabelChange = (e) => {
+    const handleLabelChange = useCallback((e) => {
         const currentLabel = e.currentTarget.value;
         setIsSaveBtnDisabled(false);
-        setIsDeleteBtnDisabled(false);
         setLabel(currentLabel);
-    };
+    }, [label]);
 
-    const handleContentChange = (e) => {
+    const debouncedLabelChangeHandler = useMemo(
+        () => debounce((event) => handleLabelChange(event), 500),
+        [handleLabelChange]
+    );
+
+    const handleContentChange = useCallback((e) => {
         const currentContent = e.currentTarget.value;
         setIsSaveBtnDisabled(false);
-        setIsDeleteBtnDisabled(false);
         setContent(currentContent);
-    };
+    }, [content]);
+
+    const debouncedContentChangeHandler = useMemo(
+        () => debounce((event) => handleContentChange(event), 500),
+        [handleContentChange]
+    );
 
     const handleSaveDiary = (e) => {
+
         if (!diariesList.length) {
             handleCreateNewDiary(e);
         } else {
@@ -63,9 +79,7 @@ function Diary() {
                     content: !content ? 'New Diary...' : content,
                     createdAt: date
                 };
-                setCreatedAt(date);
                 setDiaryId(currentDiaryId);
-                setDiary(newDiary);
                 setSelectedIndex(selectedIndex);
                 deardiary.removeDiaries(selectedIndex);
                 deardiary.createDiary(newDiary.id, newDiary.label, newDiary.content, newDiary.createdAt);
@@ -78,7 +92,12 @@ function Diary() {
         setIsMintButtonHidden(false);
     };
 
+    const handleCloseDiary = (e) => {
+        setCreateButtonShowing(true);
+    };
+
     const handleDeleteDiary = (e) => {
+        setCreateButtonShowing(true);
         deardiary.removeDiaries(selectedIndex);
         setDiariesList(previousDiariesList => {
             previousDiariesList.splice(selectedIndex, 1);
@@ -99,6 +118,8 @@ function Diary() {
     };
 
     const handleCreateNewDiary = (e) => {
+        setCreateButtonShowing(false);
+        setIsSaveBtnDisabled(true);
         const today = new Date();
         const date = (today.toLocaleString('en-us', { month: 'long' })) + ', ' + today.getFullYear();
         const currentDiaryId = Number(diaryId + 1);
@@ -109,9 +130,7 @@ function Diary() {
             createdAt: date
         };
 
-        setCreatedAt(date);
         setDiaryId(currentDiaryId);
-        setDiary(newDiary);
 
         setDiariesList(previousDiariesList => {
             deardiary.createDiary(newDiary.id, newDiary.label, newDiary.content, newDiary.createdAt);
@@ -127,7 +146,6 @@ function Diary() {
         setLabel(diariesList[selectedIndex].label);
         setContent(diariesList[selectedIndex].content);
         setDiaryId(targetId);
-        setIsDeleteBtnDisabled(false);
         setIsMintButtonHidden(false);
     };
 
@@ -146,9 +164,9 @@ function Diary() {
     };
 
     const closeModal = () => {
+        createButtonShowing(true);
         setShowModal(false);
     };
-
 
     const openGalleryPage = () => {
         let path = '/collection';
@@ -156,7 +174,6 @@ function Diary() {
     };
 
     const saveButtonStyle = isSaveBtnDisabled ? 'button-inactive' : 'button';
-    const deleteButtonStyle = isDeleteBtnDisabled ? 'button-inactive' : 'button';
 
     return (
         <>
@@ -167,7 +184,7 @@ function Diary() {
                         {nftPrincipal !== "" && (
                             <>
                                 <h2 className="minted-success">MINTED!</h2>
-                                <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} cardStyle={{cursor: "pointer"}} />
+                                <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} cardStyle={{ cursor: "pointer" }} />
                             </>
                         )}
                         {showLoader && (
@@ -182,57 +199,78 @@ function Diary() {
                 )
             }
             <div className="content">
-                <LeftSidebar
+                {/* <MyDiaries
                     handleCreateNewDiary={handleCreateNewDiary}
-                    diariesList={diariesList || []}
+                    diariesList={diariesList}
                     selectDiary={selectDiary}
                     selectedIndex={selectedIndex}
                     mintIsHidden={isMintButtonHidden}
                     handleMintDiaryOnClick={handleMintDiaryOnClick}
                     nftPrincipal={nftPrincipal}
-                />
-                <div className="diary">
-                    <div className='diary-controls'>
-                        <div className='diary-label-container'>
-                            <input
-                                className='label'
-                                name='label'
-                                placeholder='Diary Label'
-                                value={label}
-                                onChange={handleLabelChange}
+                    isShowing={createButtonShowing}
+                    handleEditDIary={selectDiary}
+                /> */}
+                {
+                    createButtonShowing ? (
+                        <>
+                            <div className='diaries-container'>
+                                <div className='add-new-diary-button' onClick={handleCreateNewDiary}>
+                                    <div className='add-new-diary'>
+                                        <span className='material-icons md-18 add-margin'>add</span>
+                                        New Diary
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='diaries-collection'>
+                                {diariesList.map((diary, index) => <Card key={index} id={nftPrincipal !== "" && nftPrincipal.toText()} role="diaries"/>)}
+                            </div>
+                        </>
+                    ) : (
+                        <div className="diary">
+                            <div className='diary-controls'>
+                                <div className='diary-label-container'>
+                                    <input
+                                        ref={inputLabel}
+                                        className='label'
+                                        name='label'
+                                        placeholder='Diary Label'
+                                        value={label}
+                                        onChange={debouncedLabelChangeHandler}
+                                    />
+                                    {/* <span className='material-icons md-18 arrow-down-icon' onClick={handleTitleOptions} hidden={true}>keyboard_arrow_down</span> */}
+                                </div>
+                                <div className='buttons-container'>
+                                    <button
+                                        id="save-button"
+                                        className={`save-${saveButtonStyle}`}
+                                        onClick={handleSaveDiary}
+                                        disabled={isSaveBtnDisabled}
+                                    >
+                                        <span className='material-icons md-18'>save</span>
+                                    </button>
+                                    <button
+                                        id="delete-button"
+                                        className={'delete-button'}
+                                        onClick={handleCloseDiary}
+                                    >
+                                        <span className='material-icons md-18'>close</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <textarea
+                                ref={inputContent}
+                                className='diary-content'
+                                name='content'
+                                placeholder='Start writting your thoughts here...'
+                                value={content}
+                                onChange={debouncedContentChangeHandler}
                             />
-                            {/* <span className='material-icons md-18 arrow-down-icon' onClick={handleTitleOptions} hidden={true}>keyboard_arrow_down</span> */}
                         </div>
-                        <div className='buttons-container'>
-                            <button
-                                id="save-button"
-                                className={`save-${saveButtonStyle}`}
-                                onClick={handleSaveDiary}
-                                disabled={isSaveBtnDisabled}
-                            >
-                                <span className='material-icons md-18'>save</span>
-                            </button>
-                            <button
-                                id="delete-button"
-                                className={`delete-${deleteButtonStyle}`}
-                                onClick={handleDeleteDiary}
-                                disabled={isDeleteBtnDisabled}
-                            >
-                                <span className='material-icons md-18'>delete_outline</span>
-                            </button>
-                        </div>
-                    </div>
-                    <textarea
-                        className='diary-content'
-                        name='content'
-                        placeholder='Start writting your thoughts here...'
-                        value={content}
-                        onChange={handleContentChange}
-                    />
-                </div>
+                    )
+                }
             </div>
         </>
     );
 }
 
-export default Diary;
+export default Create;

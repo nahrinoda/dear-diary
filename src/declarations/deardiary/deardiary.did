@@ -8,6 +8,9 @@ type Diary =
 service : {
   createDiary: (nat, text, text, text) -> () oneway;
   getDearDiaryCanisterID: () -> (principal) query;
+  getListedNFTPrice: (principal) -> (nat) query;
+  getListedNFTs: () -> (vec principal) query;
+  getOriginalOwner: (principal) -> (principal) query;
   getOwnedNFTs: (principal) -> (vec principal) query;
   isListed: (principal) -> (bool) query;
   listItem: (principal, nat) -> (text);

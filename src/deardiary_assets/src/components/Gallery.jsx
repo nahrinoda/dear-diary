@@ -5,7 +5,7 @@ import Header from './Header';
 import { Principal } from "@dfinity/principal";
 
 
-function Gallery({ ids }) {
+function Gallery({ ids, title, role }) {
     const [items, setItems] = useState();
 
     useEffect(() => {
@@ -14,7 +14,7 @@ function Gallery({ ids }) {
 
     const fetchNFTs = () => {
         if (ids != undefined) {
-            setItems(ids.map((NFTID) => <Card key={NFTID.toText()} id={NFTID} />));
+            setItems(ids.map((NFTID) => <Card key={NFTID.toText()} id={NFTID} role={role} />));
         };
     };
 
@@ -22,7 +22,7 @@ function Gallery({ ids }) {
         <>
             <Header />
             <div className="gallery-page-container">
-                <h2 className="my-nft-title">My NFTs</h2>
+                <h2 className="my-nft-title">{title}</h2>
                 <div className="my-nft-collection">
                     {items}
                 </div>

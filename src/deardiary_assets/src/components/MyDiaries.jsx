@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import Card from './Card';
 import { Principal } from '@dfinity/principal';
 
-function LeftSidebar({
+function MyDiaries({
     handleCreateNewDiary,
     diariesList,
+    isShowing = true,
+    handleEditDIary,
     selectDiary,
     selectedIndex,
     mintIsHidden,
@@ -11,25 +14,29 @@ function LeftSidebar({
 }) {
     const [diariesGroupedByCreatedBy, setDiariesGroupedByCreatedBy] = useState([]);
 
-    useEffect(() => {
-        const currentDiariesGroupedByCreatedBy = diariesList.reduce((previousDiary, currentDiary) => {
-            previousDiary[currentDiary.createdAt] = previousDiary[currentDiary.createdAt] || [];
-            previousDiary[currentDiary.createdAt].push(currentDiary);
-            return previousDiary;
-        }, Object.create(null));
+    // useEffect(() => {
+    //     const currentDiariesGroupedByCreatedBy = diariesList.reduce((previousDiary, currentDiary) => {
+    //         previousDiary[currentDiary.createdAt] = previousDiary[currentDiary.createdAt] || [];
+    //         previousDiary[currentDiary.createdAt].push(currentDiary);
+    //         return previousDiary;
+    //     }, Object.create(null));
 
-        setDiariesGroupedByCreatedBy(currentDiariesGroupedByCreatedBy);
-    }, [diariesList]);
-
+    //     setDiariesGroupedByCreatedBy(currentDiariesGroupedByCreatedBy);
+    // }, [diariesList]);
+console.log('diariesList: ', diariesList)
     return (
-        <div className='left-sidebar'>
-            <div className='left-sidebar-controls' onClick={handleCreateNewDiary}>
-                <div className='add-new-diary'>
-                    <span className='material-icons md-18 add-margin'>add</span>
-                    New Diary
-                </div>
-            </div>
-            {Object.entries(diariesGroupedByCreatedBy).map((item, index) => (
+        <div className='diaries-container'>
+            {
+                isShowing && (
+                    <div className='add-new-diary-button' onClick={handleCreateNewDiary}>
+                        <div className='add-new-diary'>
+                            <span className='material-icons md-18 add-margin'>add</span>
+                            New Diary
+                        </div>
+                    </div>
+                )
+            }
+            {/* {Object.entries(diariesGroupedByCreatedBy).map((item, index) => (
                 <dl className='dl-container' key={index}>
                     <dt className='diary-created-container'>
                         <li className='diary-date'>{item[0]}</li>
@@ -52,9 +59,9 @@ function LeftSidebar({
                         </dd>
                     ))}
                 </dl>
-            ))}
+            ))} */}
         </div>
     );
 }
 
-export default LeftSidebar;
+export default MyDiaries;
