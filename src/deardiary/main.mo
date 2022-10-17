@@ -39,8 +39,6 @@ actor DDiary {
   };
 
   public query func readDiaries(): async [Diary] {
-    let test = List.toArray(diaries);
-    // Debug.print(debug_show(test));
     return List.toArray(diaries);
   };
 

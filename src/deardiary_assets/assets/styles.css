@@ -75,6 +75,8 @@ textarea {
 
 header {
   height: 60px;
+  position: fixed;
+  display: contents;
 }
 
 .landing-page-container {
@@ -169,6 +171,7 @@ footer p {
   width: 100%;
   height: 85%;
   padding: 25px 6%;
+  overflow: overlay;
 }
 
 .add-new-diary-button,
@@ -185,8 +188,8 @@ footer p {
   text-align: center;
   border-radius: 5px;
   cursor: pointer;
-  width: 300px;
-  min-width: 300px;
+  width: 100%;
+  max-width: 300px;
 }
 
 .listed-banner {
@@ -474,7 +477,8 @@ footer p {
   height: 100%;
 }
 
-.my-nft-collection {
+.my-nft-collection,
+.diaries-gallery {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;

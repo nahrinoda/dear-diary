@@ -12,10 +12,10 @@ function Card({
     role,
     staticContent,
     staticTitle,
-    handleEdit,
-    handleMint,
-    handleDelete,
-    isCardMinted=true
+    onEdit,
+    onMint,
+    onDelete,
+    isCardMinted = true
 }) {
     const [label, setLabel] = useState();
     const [owner, setOwner] = useState();
@@ -97,6 +97,18 @@ function Card({
 
     let price;
 
+    const handleDelete = (e) => {
+        onDelete(id);
+    };
+
+    const handleEdit = (e) => {
+        onEdit(id);
+    };
+
+    const handleMint = (e) => {
+        onMint(id);
+    };
+
     const handlePriceChange = (e) => {
         price = e.target.value;
     };
@@ -171,7 +183,7 @@ function Card({
                         <div className="card-content">{staticContent}</div>
                         <div className="card-title"><b>Title: </b>{staticTitle}</div>
                         <button onClick={handleMint}>Mint</button>
-                        <button onClick={handleEdit}>Edit</button>
+                        {/* <button onClick={handleEdit}>Edit</button> */}
                         <button onClick={handleDelete}>Delete</button>
                     </div>
                 )

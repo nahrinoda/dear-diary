@@ -1,16 +1,19 @@
-import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
+import React, { useState } from 'react';
 import debounce from 'lodash/debounce';
 
 function CreateDiary({
     onAdd,
-    handleCloseDiary
+    handleCloseDiary,
+    editTitle,
+    editContent,
+    isDiaryEddited
 }) {
 
     const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(true);
 
     const [diary, setDiary] = useState({
-        title: '',
-        content: ''
+        title: '' || editTitle,
+        content: '' || editContent
     });
 
     const handleDiaryInputChange = (e) => {
@@ -24,14 +27,6 @@ function CreateDiary({
         setIsSaveBtnDisabled(false);
     };
 
-    // const debouncedDiaryInputChange = useMemo(
-    //     () => debounce((event) => {
-    //         event.persist();
-    //         handleDiaryInputChange(event)
-    //     }, 500),
-    //     [handleDiaryInputChange]
-    // );
-
     const submitDiary = (e) => {
         onAdd(diary);
         setIsSaveBtnDisabled(true);
@@ -39,6 +34,7 @@ function CreateDiary({
     };
 
     const saveButtonStyle = isSaveBtnDisabled ? 'button-inactive' : 'button';
+    const saveButtonTitle = isDiaryEddited ? 'edit' : 'save';
 
     return (
         <div className="diary">
@@ -59,7 +55,7 @@ function CreateDiary({
                         onClick={submitDiary}
                         disabled={isSaveBtnDisabled}
                     >
-                        <span className='material-icons md-18'>save</span>
+                        <span className='material-icons md-18'>{saveButtonTitle}</span>
                     </button>
                     <button
                         id="delete-button"
