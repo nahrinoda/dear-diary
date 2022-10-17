@@ -1,0 +1,7 @@
+service : {
+  getCanisterId: () -> (principal) query;
+  getContent: () -> (text) query;
+  getLabel: () -> (text) query;
+  getOwner: () -> (principal) query;
+  transferOwnership: (principal) -> (text);
+}

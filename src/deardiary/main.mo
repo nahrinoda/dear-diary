@@ -14,10 +14,10 @@ actor DDiary {
   };
 
   public type Diary = {
-    id: Nat;
-    diaryLabel: Text;
+    // id: Nat;
+    title: Text;
     content: Text;
-    createdAt: Text;
+    // createdAt: Text;
   };
 
   var mapOfNFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1, Principal.equal, Principal.hash);
@@ -26,16 +26,16 @@ actor DDiary {
 
   stable var diaries: List.List<Diary> = List.nil<Diary>();
 
-  public func createDiary(idNumber: Nat, labelText: Text, contentText: Text, dateText: Text) {
+  public func createDiary(titleText: Text, contentText: Text) {
     let newDiary: Diary = {
-      id = idNumber;
-      diaryLabel = labelText;
+      // id = idNumber;
+      title = titleText;
       content = contentText;
-      createdAt = dateText;
+      // createdAt = dateText;
     };
 
     diaries := List.push(newDiary, diaries);
-    // Debug.print(debug_show(diaries));
+    Debug.print(debug_show(diaries));
   };
 
   public query func readDiaries(): async [Diary] {

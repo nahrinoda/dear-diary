@@ -1,17 +1,7 @@
 import type { Principal } from '@dfinity/principal';
-export interface Diary {
-  'id' : bigint,
-  'content' : string,
-  'diaryLabel' : string,
-  'createdAt' : string,
-}
+export interface Diary { 'title' : string, 'content' : string }
 export interface _SERVICE {
-  'createDiary' : (
-      arg_0: bigint,
-      arg_1: string,
-      arg_2: string,
-      arg_3: string,
-    ) => Promise<undefined>,
+  'createDiary' : (arg_0: string, arg_1: string) => Promise<undefined>,
   'getDearDiaryCanisterID' : () => Promise<Principal>,
   'getListedNFTPrice' : (arg_0: Principal) => Promise<bigint>,
   'getListedNFTs' : () => Promise<Array<Principal>>,

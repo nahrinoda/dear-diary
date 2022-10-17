@@ -5,7 +5,18 @@ import { deardiary } from '../../../declarations/deardiary';
 import { Principal } from '@dfinity/principal';
 import CURRENT_USER_ID from '../index';
 
-function Card({ id, handleCardOnClick, cardStyle, role }) {
+function Card({
+    id,
+    handleCardOnClick,
+    cardStyle,
+    role,
+    staticContent,
+    staticTitle,
+    handleEdit,
+    handleMint,
+    handleDelete,
+    isCardMinted=true
+}) {
     const [label, setLabel] = useState();
     const [owner, setOwner] = useState();
     const [content, setContent] = useState();
@@ -58,7 +69,7 @@ function Card({ id, handleCardOnClick, cardStyle, role }) {
             }
 
             const price = await deardiary.getListedNFTPrice(id);
-            
+
             setPriceListing(
                 <div className="card-listing">
                     <b className="add-margin">Price: </b>
@@ -77,7 +88,7 @@ function Card({ id, handleCardOnClick, cardStyle, role }) {
                 setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
             };
 
-        } 
+        }
     };
 
     useEffect(() => {
@@ -139,19 +150,32 @@ function Card({ id, handleCardOnClick, cardStyle, role }) {
 
     return (
         <div className="card-container" onClick={handleCardOnClick} style={cardStyle}>
-            <div>
-
-                <div className="card-content" style={blur}>
-                    {content}
-                </div>
-                <div className="card-title"><b>Title: </b>{label}</div>
-                <div className="card-owner"><b>Owner: </b>{owner}</div>
-                {priceListing}
-            </div>
-            <div className="card-buttons-container">
-                {priceInput}
-                {button}
-            </div>
+            {
+                isCardMinted ? (
+                    <>
+                        <div>
+                            <div className="card-content" style={blur}>
+                                {content}
+                            </div>
+                            <div className="card-title"><b>Title: </b>{label}</div>
+                            <div className="card-owner"><b>Owner: </b>{owner}</div>
+                            {priceListing}
+                        </div>
+                        <div className="card-buttons-container">
+                            {priceInput}
+                            {button}
+                        </div>
+                    </>
+                ) : (
+                    <div className='static-card-content'>
+                        <div className="card-content">{staticContent}</div>
+                        <div className="card-title"><b>Title: </b>{staticTitle}</div>
+                        <button onClick={handleMint}>Mint</button>
+                        <button onClick={handleEdit}>Edit</button>
+                        <button onClick={handleDelete}>Delete</button>
+                    </div>
+                )
+            }
         </div>
     );
 }
