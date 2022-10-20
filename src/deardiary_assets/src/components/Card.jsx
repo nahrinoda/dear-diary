@@ -15,7 +15,8 @@ function Card({
     onEdit,
     onMint,
     onDelete,
-    isCardMinted = true
+    isCardMinted = true,
+    currentImage
 }) {
     const [label, setLabel] = useState();
     const [owner, setOwner] = useState();
@@ -24,6 +25,7 @@ function Card({
     const [priceInput, setPriceInput] = useState();
     const [priceListing, setPriceListing] = useState();
     const [blur, setBlur] = useState();
+    const [image, setImage] = useState();
 
     const currentId = id;
 
@@ -48,6 +50,11 @@ function Card({
 
         const content = await NFTActor.getContent();
         setContent(content);
+
+        const coverImage = await NFTActor.getCoverImage();
+        const imageContent = new Uint8Array(coverImage);
+        const image = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' }));
+        setImage(image);
 
         if (role === "collection") {
             const nftIsListed = await deardiary.isListed(id);
@@ -167,7 +174,10 @@ function Card({
                     <>
                         <div>
                             <div className="card-content" style={blur}>
-                                {content}
+                                <img
+                                    className='cover-image'
+                                    src={image}
+                                />
                             </div>
                             <div className="card-title"><b>Title: </b>{label}</div>
                             <div className="card-owner"><b>Owner: </b>{owner}</div>
@@ -180,7 +190,12 @@ function Card({
                     </>
                 ) : (
                     <div className='static-card-content'>
-                        <div className="card-content">{staticContent}</div>
+                        <div className="card-content">
+                            <img
+                                className='cover-image'
+                                src={currentImage}
+                            />
+                        </div>
                         <div className="card-title"><b>Title: </b>{staticTitle}</div>
                         <button onClick={handleMint}>Mint</button>
                         {/* <button onClick={handleEdit}>Edit</button> */}

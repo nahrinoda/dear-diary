@@ -30,11 +30,13 @@ function Create() {
         setDiaries(diariesArray);
     };
 
-    const handleAddingDiary = (newDiary) => {
+    const handleAddingDiary = async (newDiary) => {
         const currentTitle = newDiary.title;
         const currentContent = newDiary.content;
+        const currentImage = newDiary.image;
+        const imageByteData = [...new Uint8Array(await currentImage.arrayBuffer())];
         setDiaries((prevDiaries) => {
-            deardiary.createDiary(currentTitle, currentContent);
+            deardiary.createDiary(currentTitle, currentContent, imageByteData);
             return [newDiary, ...prevDiaries];
         });
     };
@@ -56,6 +58,7 @@ function Create() {
         setCreateButtonShowing(false);
     };
 
+    // TODO: hook editing method up
     const handleEditDiary = (id) => {
         setCreateButtonShowing(false);
         const currentDiary = diaries[id];
@@ -70,7 +73,9 @@ function Create() {
         handleDeleteDiary(id);
         const title = diaries[id].title;
         const content = diaries[id].content;
-        const newNFTID = await deardiary.mint(title, content)
+        const imageArray = await diaries[id].image.arrayBuffer();
+        const imageByteData = [...new Uint8Array(imageArray)];
+        const newNFTID = await deardiary.mint(title, content, imageByteData);
 
         setNftPrincipal(newNFTID);
         setShowLoader(false);
@@ -121,18 +126,23 @@ function Create() {
                                 </div>
                             </div>
                             <div className='diaries-gallery'>
-                                {diaries.map((diary, index) => (
-                                    <Card
-                                        key={index}
-                                        id={index}
-                                        staticTitle={diary.title}
-                                        staticContent={diary.content}
-                                        onMint={handleMintDiaryOnClick}
-                                        onDelete={handleDeleteDiary}
-                                        // onEdit={handleEditDiary}
-                                        isCardMinted={false}
-                                    />
-                                )
+                                {diaries.map((diary, index) => {
+                                    const imageContent = new Uint8Array(diary.image);
+                                    const imageUrl = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' }));
+                                    return (
+                                        <Card
+                                            key={index}
+                                            id={index}
+                                            staticTitle={diary.title}
+                                            staticContent={diary.content}
+                                            onMint={handleMintDiaryOnClick}
+                                            onDelete={handleDeleteDiary}
+                                            // onEdit={handleEditDiary}
+                                            isCardMinted={false}
+                                            currentImage={imageUrl}
+                                        />
+                                    )
+                                }
                                 )}
                             </div>
                         </>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
+import Card from './Card';
 
 function CreateDiary({
     onAdd,
@@ -13,19 +14,22 @@ function CreateDiary({
 
     const [diary, setDiary] = useState({
         title: '' || editTitle,
-        content: '' || editContent
+        content: '' || editContent,
+        image: ''
     });
 
-    const handleDiaryInputChange = (e) => {
-        const { name, value } = e.target;
+    const handleDiaryInputChange = async (e) => {
+        const { name, value, files } = e.target;
         setDiary((previousDiary) => {
             return {
                 ...previousDiary,
-                [name]: value
+                [name]: name == 'image' ? files[0] : value,
             }
         });
+
         setIsSaveBtnDisabled(false);
     };
+
 
     const submitDiary = (e) => {
         onAdd(diary);
@@ -46,6 +50,16 @@ function CreateDiary({
                         placeholder='Diary Label'
                         value={diary.title}
                         onChange={handleDiaryInputChange}
+                        required={true}
+                    />
+                </div>
+                <div className='cover-image-input'>
+                    <input 
+                        className='upload-file' 
+                        name="image" 
+                        type="file" 
+                        onChange={handleDiaryInputChange}
+                        accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp" 
                     />
                 </div>
                 <div className='buttons-container'>
@@ -66,12 +80,14 @@ function CreateDiary({
                     </button>
                 </div>
             </div>
+            <img src={diary.image} width="150px" height="150px" />
             <textarea
                 className='diary-content'
                 name='content'
                 placeholder='Start writting your thoughts here...'
                 value={diary.content}
                 onChange={handleDiaryInputChange}
+                required={true}
             />
         </div>
     );

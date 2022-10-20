@@ -1,10 +1,11 @@
 type Diary = 
  record {
    content: text;
+   image: vec nat8;
    title: text;
  };
 service : {
-  createDiary: (text, text) -> () oneway;
+  createDiary: (text, text, vec nat8) -> () oneway;
   getDearDiaryCanisterID: () -> (principal) query;
   getListedNFTPrice: (principal) -> (nat) query;
   getListedNFTs: () -> (vec principal) query;
@@ -12,7 +13,7 @@ service : {
   getOwnedNFTs: (principal) -> (vec principal) query;
   isListed: (principal) -> (bool) query;
   listItem: (principal, nat) -> (text);
-  mint: (text, text) -> (principal);
+  mint: (text, text, vec nat8) -> (principal);
   readDiaries: () -> (vec Diary) query;
   removeDiaries: (nat) -> () oneway;
 }

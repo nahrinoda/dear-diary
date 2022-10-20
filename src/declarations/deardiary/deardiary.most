@@ -1,5 +1,5 @@
 // Version: 1.0.0
-type Diary = {content : Text; title : Text};
+type Diary = {content : Text; image : [Nat8]; title : Text};
 type List<T> = ?(T, List<T>);
 actor {
   stable var diaries : ?(Diary, List<Diary>)

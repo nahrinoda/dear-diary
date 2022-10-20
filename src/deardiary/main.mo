@@ -17,6 +17,7 @@ actor DDiary {
     // id: Nat;
     title: Text;
     content: Text;
+    image: [Nat8];
     // createdAt: Text;
   };
 
@@ -26,11 +27,12 @@ actor DDiary {
 
   stable var diaries: List.List<Diary> = List.nil<Diary>();
 
-  public func createDiary(titleText: Text, contentText: Text) {
+  public func createDiary(titleText: Text, contentText: Text, coverImage: [Nat8]) {
     let newDiary: Diary = {
       // id = idNumber;
       title = titleText;
       content = contentText;
+      image = coverImage
       // createdAt = dateText;
     };
 
@@ -49,12 +51,12 @@ actor DDiary {
     //  Debug.print(debug_show(diaries))
   }; 
 
-  public shared(msg) func mint(name: Text, content: Text) : async Principal {
+  public shared(msg) func mint(name: Text, content: Text, coverImage: [Nat8]) : async Principal {
     let owner: Principal = msg.caller;
 
     Debug.print(debug_show(Cycles.balance()));
     Cycles.add(100_500_000_000);
-    let newNFT = await NFTActorClass.NFT(name, owner, content);
+    let newNFT = await NFTActorClass.NFT(name, owner, content, coverImage);
     Debug.print(debug_show(Cycles.balance()));
 
     let newNFTPrincipal = await newNFT.getCanisterId();
