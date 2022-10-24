@@ -174,14 +174,25 @@ footer p {
   overflow: overlay;
 }
 
+.add-new-collection-button {
+  border: solid 1px #F7A654;
+  background: #F7A654;
+}
+
 .add-new-diary-button,
 .sell-confirm-button,
 .listed-banner {
+  border: solid 1px #5bc0de;
+  background: #5bc0de;
+}
+
+.add-new-diary-button,
+.sell-confirm-button,
+.listed-banner,
+.add-new-collection-button {
   display: flex;
   justify-content: center;
   height: 45px;
-  border: solid 1px #5bc0de;
-  background: #5bc0de;
   color: #F2F2F2;
   margin-bottom: 10px;
   align-items: center;
@@ -273,7 +284,8 @@ footer p {
 }
 
 .add-new-diary-button:hover,
-.sell-confirm-button:hover {
+.sell-confirm-button:hover,
+.add-new-collection-button:hover {
   opacity: 0.5;
 }
 

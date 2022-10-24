@@ -25,7 +25,7 @@ function Card({
     const [priceInput, setPriceInput] = useState();
     const [priceListing, setPriceListing] = useState();
     const [blur, setBlur] = useState();
-    const [image, setImage] = useState();
+    // const [image, setImage] = useState();
 
     const currentId = id;
 
@@ -51,10 +51,10 @@ function Card({
         const content = await NFTActor.getContent();
         setContent(content);
 
-        const coverImage = await NFTActor.getCoverImage();
-        const imageContent = new Uint8Array(coverImage);
-        const image = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' }));
-        setImage(image);
+        // const coverImage = await NFTActor.getCoverImage();
+        // const imageContent = new Uint8Array(coverImage);
+        // const image = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' }));
+        // setImage(image);
 
         if (role === "collection") {
             const nftIsListed = await deardiary.isListed(id);
@@ -176,7 +176,7 @@ function Card({
                             <div className="card-content" style={blur}>
                                 <img
                                     className='cover-image'
-                                    src={image}
+                                    src="https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
                                 />
                             </div>
                             <div className="card-title"><b>Title: </b>{label}</div>
@@ -193,7 +193,7 @@ function Card({
                         <div className="card-content">
                             <img
                                 className='cover-image'
-                                src={currentImage}
+                                src="https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
                             />
                         </div>
                         <div className="card-title"><b>Title: </b>{staticTitle}</div>

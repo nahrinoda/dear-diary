@@ -19,11 +19,11 @@ function CreateDiary({
     });
 
     const handleDiaryInputChange = async (e) => {
-        const { name, value, files } = e.target;
+        const { name, value } = e.target;
         setDiary((previousDiary) => {
             return {
                 ...previousDiary,
-                [name]: name == 'image' ? files[0] : value,
+                [name]: value,
             }
         });
 
@@ -54,13 +54,13 @@ function CreateDiary({
                     />
                 </div>
                 <div className='cover-image-input'>
-                    <input 
-                        className='upload-file' 
-                        name="image" 
-                        type="file" 
+                    {/* <input
+                        className='upload-file'
+                        name="image"
+                        type="file"
                         onChange={handleDiaryInputChange}
-                        accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp" 
-                    />
+                        accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp"
+                    /> */}
                 </div>
                 <div className='buttons-container'>
                     <button
@@ -80,7 +80,7 @@ function CreateDiary({
                     </button>
                 </div>
             </div>
-            <img src={diary.image} width="150px" height="150px" />
+            <img src="https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60" width="150px" height="150px" />
             <textarea
                 className='diary-content'
                 name='content'

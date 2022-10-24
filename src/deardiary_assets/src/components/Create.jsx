@@ -5,6 +5,7 @@ import { deardiary } from '../../../declarations/deardiary';
 import { useNavigate } from "react-router-dom";
 import { Principal } from '@dfinity/principal';
 import Header from './Header';
+import AddButton from './AddButton';
 
 
 function Create() {
@@ -33,10 +34,10 @@ function Create() {
     const handleAddingDiary = async (newDiary) => {
         const currentTitle = newDiary.title;
         const currentContent = newDiary.content;
-        const currentImage = newDiary.image;
-        const imageByteData = [...new Uint8Array(await currentImage.arrayBuffer())];
+        // const currentImage = newDiary.image;
+        // const imageByteData = [...new Uint8Array(await currentImage.arrayBuffer())];
         setDiaries((prevDiaries) => {
-            deardiary.createDiary(currentTitle, currentContent, imageByteData);
+            deardiary.createDiary(currentTitle, currentContent);
             return [newDiary, ...prevDiaries];
         });
     };
@@ -68,7 +69,6 @@ function Create() {
     };
 
     const handleMintDiaryOnClick = async (id) => {
-        console.log(id)
         setShowLoader(true);
         handleDeleteDiary(id);
         const title = diaries[id].title;
@@ -117,18 +117,11 @@ function Create() {
                 {
                     createButtonShowing ? (
                         <>
-                            <div className='diaries-container'>
-                                <div className='add-new-diary-button' onClick={handleCreateNewDiary}>
-                                    <div className='add-new-diary'>
-                                        <span className='material-icons md-18 add-margin'>add</span>
-                                        New Diary
-                                    </div>
-                                </div>
-                            </div>
+                            <AddButton handleClick={handleCreateNewDiary} buttonName="diary"  />
                             <div className='diaries-gallery'>
                                 {diaries.map((diary, index) => {
-                                    const imageContent = new Uint8Array(diary.image);
-                                    const imageUrl = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' }));
+                                    {/* const imageContent = new Uint8Array(diary.image);
+                                    const imageUrl = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' })); */}
                                     return (
                                         <Card
                                             key={index}
@@ -139,7 +132,7 @@ function Create() {
                                             onDelete={handleDeleteDiary}
                                             // onEdit={handleEditDiary}
                                             isCardMinted={false}
-                                            currentImage={imageUrl}
+                                            // currentImage={imageUrl}
                                         />
                                     )
                                 }

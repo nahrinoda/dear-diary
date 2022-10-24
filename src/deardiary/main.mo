@@ -17,7 +17,6 @@ actor DDiary {
     // id: Nat;
     title: Text;
     content: Text;
-    image: [Nat8];
     // createdAt: Text;
   };
 
@@ -27,12 +26,12 @@ actor DDiary {
 
   stable var diaries: List.List<Diary> = List.nil<Diary>();
 
-  public func createDiary(titleText: Text, contentText: Text, coverImage: [Nat8]) {
+  public func createDiary(titleText: Text, contentText: Text) {
     let newDiary: Diary = {
       // id = idNumber;
       title = titleText;
       content = contentText;
-      image = coverImage
+      // image = coverImage;
       // createdAt = dateText;
     };
 

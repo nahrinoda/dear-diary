@@ -1,15 +1,7 @@
 export const idlFactory = ({ IDL }) => {
-  const Diary = IDL.Record({
-    'title' : IDL.Text,
-    'content' : IDL.Text,
-    'image' : IDL.Vec(IDL.Nat8),
-  });
+  const Diary = IDL.Record({ 'title' : IDL.Text, 'content' : IDL.Text });
   return IDL.Service({
-    'createDiary' : IDL.Func(
-        [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8)],
-        [],
-        ['oneway'],
-      ),
+    'createDiary' : IDL.Func([IDL.Text, IDL.Text], [], ['oneway']),
     'getDearDiaryCanisterID' : IDL.Func([], [IDL.Principal], ['query']),
     'getListedNFTPrice' : IDL.Func([IDL.Principal], [IDL.Nat], ['query']),
     'getListedNFTs' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
