@@ -141,10 +141,10 @@ function Create() {
                         </>
                     ) : (
                         <CreateDiary
-                            onAdd={handleAddingDiary}
+                            // onAdd={handleAddingDiary}
                             handleCloseDiary={handleCloseDiary}
-                            editTitle={editTitle}
-                            editContent={editContent}
+                            // editTitle={editTitle}
+                            // editContent={editContent}
                             isDiaryEddited={isDiaryEddited}
                         />
                     )

@@ -1,75 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import debounce from 'lodash/debounce';
-import Card from './Card';
+import { useForm } from "react-hook-form";
+import { deardiary } from '../../../declarations/deardiary';
+import { Principal } from '@dfinity/principal';
 
-function CreateDiary({
-    onAdd,
-    handleCloseDiary,
-    editTitle,
-    editContent,
-    isDiaryEddited
-}) {
+function CreateDiary({ handleCloseDiary }) {
+    const { register, handleSubmit } = useForm();
+    const [currentImage, setCurrentImage] = useState('');
 
-    const [isSaveBtnDisabled, setIsSaveBtnDisabled] = useState(true);
-
-    const [diary, setDiary] = useState({
-        title: '' || editTitle,
-        content: '' || editContent,
-        image: ''
-    });
-
-    const handleDiaryInputChange = async (e) => {
-        const { name, value } = e.target;
-        setDiary((previousDiary) => {
-            return {
-                ...previousDiary,
-                [name]: value,
-            }
-        });
-
-        setIsSaveBtnDisabled(false);
+    async function onSubmit(data) {
+        const title = data.title;
+        const content = data.content;
+        const image = data.image[0];
+        const imageByteData = [...new Uint8Array(await image.arrayBuffer())];
+        setCurrentImage(URL.createObjectURL(image));
+        const newNFTId = await deardiary.mint(title, content, imageByteData);
+        console.log(newNFTId.toText())
     };
 
-
-    const submitDiary = (e) => {
-        onAdd(diary);
-        setIsSaveBtnDisabled(true);
-        e.preventDefault();
-    };
-
-    const saveButtonStyle = isSaveBtnDisabled ? 'button-inactive' : 'button';
-    const saveButtonTitle = isDiaryEddited ? 'edit' : 'save';
-
+    // const saveButtonStyle = isSaveBtnDisabled ? 'button-inactive' : 'button';
+    // const saveButtonTitle = isDiaryEddited ? 'edit' : 'save';
     return (
         <div className="diary">
             <div className='diary-controls'>
                 <div className='diary-label-container'>
                     <input
+                        {...register("title", { required: true })}
+                        type="text"
                         className='label'
-                        name='title'
                         placeholder='Diary Label'
-                        value={diary.title}
-                        onChange={handleDiaryInputChange}
-                        required={true}
                     />
-                </div>
-                <div className='cover-image-input'>
-                    {/* <input
-                        className='upload-file'
-                        name="image"
-                        type="file"
-                        onChange={handleDiaryInputChange}
-                        accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp"
-                    /> */}
                 </div>
                 <div className='buttons-container'>
                     <button
                         id="save-button"
-                        className={`save-${saveButtonStyle}`}
-                        onClick={submitDiary}
-                        disabled={isSaveBtnDisabled}
+                        className={'save-button'}
+                        onClick={handleSubmit(onSubmit)}
+                    // disabled={isSaveBtnDisabled}
                     >
-                        <span className='material-icons md-18'>{saveButtonTitle}</span>
+                        <span className='material-icons md-18'>save</span>
                     </button>
                     <button
                         id="delete-button"
@@ -80,14 +48,23 @@ function CreateDiary({
                     </button>
                 </div>
             </div>
-            <img src="https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60" width="150px" height="150px" />
+            {/* <div className='cover-image-input'> */}
+                {/* <label htmlFor="inputTag"> */}
+                    <input
+                        {...register("image", { required: true })}
+                        id="inputTag"
+                        className='upload-file'
+                        type="file"
+                        accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp"
+                    />
+                    {/* {currentImage.length === 0 && <span className="material-icons add-photo-icon">add_photo_alternate</span>} */}
+                {/* </label> */}
+                {/* {currentImage.length > 0 && <img className="diary-cover-image" src={currentImage} />} */}
+            {/* </div> */}
             <textarea
+                {...register("content", { required: true })}
                 className='diary-content'
-                name='content'
                 placeholder='Start writting your thoughts here...'
-                value={diary.content}
-                onChange={handleDiaryInputChange}
-                required={true}
             />
         </div>
     );

@@ -42,6 +42,15 @@ textarea {
   background: none;
 }
 
+label {
+  cursor: pointer;
+  position: absolute;
+}
+
+#inputTag {
+  display: none;
+}
+
 .label,
 .nft-price {
   border: none;
@@ -328,6 +337,7 @@ footer p {
   position: relative;
   overflow: auto;
   scroll-behavior: smooth;
+  height: auto;
 }
 
 .left-sidebar-item {
@@ -339,6 +349,14 @@ footer p {
   font-size: 16px;
   text-align: center;
   font-weight: 300;
+}
+
+.diary-cover-image {
+  position: relative;
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+  cursor: pointer;
 }
 
 .left-sidebar-item:hover {
@@ -605,6 +623,26 @@ footer p {
   height: 100%;
   position: relative;
   object-fit: contain;
+}
+
+.diary-cover-image:hover {
+  opacity: 0.7;
+}
+
+.add-photo-icon {
+  font-size: 50px;
+  color: #D9D6D2;
+}
+
+.cover-image-input {
+  height: 35%;
+  background-color: #f2f2f2;
+  background-size: 10px 10px;
+  background-image: repeating-linear-gradient(45deg, #D9D6D2 0, #D9D6D2 1px, #f2f2f2 0, #f2f2f2 50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-bottom: solid 1px #D9D6D2;
 }
 
 @keyframes lds-ellipsis1 {
