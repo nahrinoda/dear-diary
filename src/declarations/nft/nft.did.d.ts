@@ -1,10 +1,15 @@
-import type { Principal } from '@dfinity/principal';
+import type { Principal } from '@icp-sdk/core/principal';
+import type { ActorMethod } from '@icp-sdk/core/agent';
+import type { IDL } from '@icp-sdk/core/candid';
+
 export interface NFT {
-  'getCanisterId' : () => Promise<Principal>,
-  'getContent' : () => Promise<string>,
-  'getCoverImage' : () => Promise<Array<number>>,
-  'getLabel' : () => Promise<string>,
-  'getOwner' : () => Promise<Principal>,
-  'transferOwnership' : (arg_0: Principal) => Promise<string>,
+  'getCanisterId' : ActorMethod<[], Principal>,
+  'getContent' : ActorMethod<[], string>,
+  'getCoverImage' : ActorMethod<[], Uint8Array | number[]>,
+  'getLabel' : ActorMethod<[], string>,
+  'getOwner' : ActorMethod<[], Principal>,
+  'transferOwnership' : ActorMethod<[Principal], string>,
 }
 export interface _SERVICE extends NFT {}
+export declare const idlFactory: IDL.InterfaceFactory;
+export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

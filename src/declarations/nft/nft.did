@@ -5,6 +5,6 @@ type NFT =
    getCoverImage: () -> (vec nat8) query;
    getLabel: () -> (text) query;
    getOwner: () -> (principal) query;
-   transferOwnership: (principal) -> (text);
+   transferOwnership: (newOwner: principal) -> (text);
  };
-service : (text, principal, text, vec nat8) -> NFT
+service : (name: text, owner: principal, content: text, coverImage: vec nat8) -> NFT

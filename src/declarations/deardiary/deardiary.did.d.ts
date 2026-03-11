@@ -1,17 +1,20 @@
-import type { Principal } from '@dfinity/principal';
+import type { Principal } from '@icp-sdk/core/principal';
+import type { ActorMethod } from '@icp-sdk/core/agent';
+import type { IDL } from '@icp-sdk/core/candid';
+
 export interface Diary { 'title' : string, 'content' : string }
 export interface _SERVICE {
-  'createDiary' : (arg_0: string, arg_1: string) => Promise<undefined>,
-  'getDearDiaryCanisterID' : () => Promise<Principal>,
-  'getListedNFTPrice' : (arg_0: Principal) => Promise<bigint>,
-  'getListedNFTs' : () => Promise<Array<Principal>>,
-  'getOriginalOwner' : (arg_0: Principal) => Promise<Principal>,
-  'getOwnedNFTs' : (arg_0: Principal) => Promise<Array<Principal>>,
-  'isListed' : (arg_0: Principal) => Promise<boolean>,
-  'listItem' : (arg_0: Principal, arg_1: bigint) => Promise<string>,
-  'mint' : (arg_0: string, arg_1: string, arg_2: Array<number>) => Promise<
-      Principal
-    >,
-  'readDiaries' : () => Promise<Array<Diary>>,
-  'removeDiaries' : (arg_0: bigint) => Promise<undefined>,
+  'createDiary' : ActorMethod<[string, string], undefined>,
+  'getDearDiaryCanisterID' : ActorMethod<[], Principal>,
+  'getListedNFTPrice' : ActorMethod<[Principal], bigint>,
+  'getListedNFTs' : ActorMethod<[], Array<Principal>>,
+  'getOriginalOwner' : ActorMethod<[Principal], Principal>,
+  'getOwnedNFTs' : ActorMethod<[Principal], Array<Principal>>,
+  'isListed' : ActorMethod<[Principal], boolean>,
+  'listItem' : ActorMethod<[Principal, bigint], string>,
+  'mint' : ActorMethod<[string, string, Uint8Array | number[]], Principal>,
+  'readDiaries' : ActorMethod<[], Array<Diary>>,
+  'removeDiaries' : ActorMethod<[bigint], undefined>,
 }
+export declare const idlFactory: IDL.InterfaceFactory;
+export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

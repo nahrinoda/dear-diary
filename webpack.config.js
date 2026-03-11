@@ -2,7 +2,6 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
 
 function initCanisterEnv() {
   let localCanisters, prodCanisters;
@@ -31,7 +30,7 @@ function initCanisterEnv() {
 
   return Object.entries(canisterConfig).reduce((prev, current) => {
     const [canisterName, canisterDetails] = current;
-    prev[canisterName.toUpperCase() + "_CANISTER_ID"] =
+    prev["CANISTER_ID_" + canisterName.toUpperCase()] =
       canisterDetails[network];
     return prev;
   }, {});
@@ -48,8 +47,6 @@ module.exports = {
   target: "web",
   mode: isDevelopment ? "development" : "production",
   entry: {
-    // The frontend.entrypoint points to the HTML file for this build, so we need
-    // to replace the extension to `.js`.
     index: path.join(__dirname, asset_entry).replace(/\.html$/, ".jsx"),
   },
   devtool: isDevelopment ? "source-map" : false,
@@ -71,12 +68,6 @@ module.exports = {
     filename: "index.js",
     path: path.join(__dirname, "dist", frontendDirectory),
   },
-
-  // Depending in the language or framework you are using for
-  // front-end development, add module loaders to the default
-  // webpack configuration. For example, if you are using React
-  // modules and CSS as described in the "Adding a stylesheet"
-  // tutorial, uncomment the following lines:
   module: {
     rules: [
       { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
@@ -92,14 +83,7 @@ module.exports = {
       template: path.join(__dirname, asset_entry),
       cache: false,
     }),
-    new CopyPlugin({
-      patterns: [
-        {
-          from: path.join(__dirname, "src", frontendDirectory, "assets"),
-          to: path.join(__dirname, "dist", frontendDirectory),
-        },
-      ],
-    }),
+    // CopyPlugin removed — DFX serves assets directly from src/deardiary_assets/assets
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
       ...canisterEnvVariables,
@@ -109,7 +93,6 @@ module.exports = {
       process: require.resolve("process/browser"),
     }),
   ],
-  // proxy /api to port 8000 during development
   devServer: {
     proxy: {
       "/api": {

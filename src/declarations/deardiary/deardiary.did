@@ -4,15 +4,15 @@ type Diary =
    title: text;
  };
 service : {
-  createDiary: (text, text) -> () oneway;
+  createDiary: (titleText: text, contentText: text) -> () oneway;
   getDearDiaryCanisterID: () -> (principal) query;
-  getListedNFTPrice: (principal) -> (nat) query;
+  getListedNFTPrice: (id: principal) -> (nat) query;
   getListedNFTs: () -> (vec principal) query;
-  getOriginalOwner: (principal) -> (principal) query;
-  getOwnedNFTs: (principal) -> (vec principal) query;
-  isListed: (principal) -> (bool) query;
-  listItem: (principal, nat) -> (text);
-  mint: (text, text, vec nat8) -> (principal);
+  getOriginalOwner: (id: principal) -> (principal) query;
+  getOwnedNFTs: (user: principal) -> (vec principal) query;
+  isListed: (id: principal) -> (bool) query;
+  listItem: (id: principal, price: nat) -> (text);
+  mint: (name: text, content: text, coverImage: vec nat8) -> (principal);
   readDiaries: () -> (vec Diary) query;
-  removeDiaries: (nat) -> () oneway;
+  removeDiaries: (id: nat) -> () oneway;
 }
