@@ -135,10 +135,9 @@ header {
 }
 
 .landing-page-header-box {
-  width: 850px;
+  width: min(850px, 92vw);
   height: 470px;
   border-radius: 25px;
-  /* border: solid 1px #8C8C8C; */
   z-index: -1;
   display: flex;
   align-items: center;
@@ -181,11 +180,9 @@ footer p {
 }
 
 .content {
-  position: absolute;
   width: 100%;
-  height: 85%;
-  padding: 25px 6%;
-  overflow: overlay;
+  padding: 85px 6% 40px;
+  min-height: calc(100vh - 60px);
 }
 
 .add-new-collection-button {
@@ -426,7 +423,8 @@ footer p {
 
 .landing-page-description-content,
 .start-creating {
-  width: 400px;
+  max-width: 400px;
+  width: 100%;
   font-weight: 300;
   line-height: 40px;
   letter-spacing: 4px;
@@ -453,7 +451,7 @@ footer p {
 .landing-page-topbar {
   position: absolute;
   text-align: right;
-  width: 850px;
+  width: min(850px, 92vw);
   top: 30px;
   display: flex;
   justify-content: end;
@@ -477,7 +475,7 @@ footer p {
 }
 
 .card-container {
-  width: 300px;
+  width: min(300px, calc(100vw - 24px));
   background: #F2F2F2;
   padding: 10px;
   border-radius: 4px;
@@ -529,8 +527,7 @@ footer p {
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 20px 0;
-  overflow: hidden;
+  padding: 80px 0 40px;
 }
 
 .my-nft-title {
@@ -561,13 +558,13 @@ footer p {
 }
 
 .minting-modal {
-  position: absolute;
-  background: #8c8c8c76;
+  position: fixed;
+  background: rgba(0, 0, 0, 0.55);
   top: 0;
   left: 0;
+  right: 0;
   bottom: 0;
-  width: 100%;
-  z-index: 10;
+  z-index: 200;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -771,7 +768,144 @@ footer p {
   transform: translateY(-2px);
 }
 
-/* ── Minting modal — relative position for close btn ─────── */
-.minting-modal {
-  position: relative;
+/* ── Responsive Design ───────────────────────────────────── */
+
+/* Tablet landscape / small desktop (≤900px) */
+@media (max-width: 900px) {
+  .landing-page-header-box {
+    height: auto;
+    min-height: 360px;
+  }
+
+  .landing-page-description-container {
+    position: relative;
+    margin: 0;
+    top: 0;
+    padding: 20px 6%;
+  }
 }
+
+/* Tablet portrait (≤768px) */
+@media (max-width: 768px) {
+  .diary {
+    width: 95%;
+  }
+
+  .landing-page-header-title {
+    font-size: 42px;
+    top: -28px;
+  }
+
+  .landing-page-header-box {
+    flex-direction: column;
+    align-items: flex-start;
+    min-height: 300px;
+  }
+
+  .landing-page-image-container {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 25px 25px 0 0;
+  }
+
+  .diaries-image,
+  .clouds-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .landing-page-description-container {
+    position: relative;
+    margin: 0;
+    top: 0;
+    padding: 16px 20px 20px;
+  }
+
+  .landing-page-description-content {
+    font-size: 16px;
+    line-height: 32px;
+    letter-spacing: 2px;
+  }
+
+  .content {
+    padding: 80px 4% 40px;
+  }
+}
+
+/* Phone (≤480px) */
+@media (max-width: 480px) {
+  /* Header */
+  .header-title {
+    margin: 0 3%;
+    font-size: 16px;
+  }
+
+  .right-side-header {
+    font-size: 13px;
+  }
+
+  .landing-page-links {
+    margin: 22px 4px;
+    padding: 4px 5px;
+  }
+
+  /* Landing page */
+  .landing-page-header-title {
+    font-size: 30px;
+    top: -20px;
+    letter-spacing: 1px;
+  }
+
+  .landing-page-description-content {
+    font-size: 15px;
+    line-height: 28px;
+    letter-spacing: 1px;
+  }
+
+  .landing-page-image-container {
+    height: 160px;
+  }
+
+  /* Create / diary editor */
+  .diary {
+    width: 99%;
+    border-radius: 4px;
+  }
+
+  .content {
+    padding: 75px 3% 30px;
+  }
+
+  /* Gallery cards — single column */
+  .my-nft-collection,
+  .diaries-gallery {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card-container {
+    width: calc(100vw - 20px);
+    margin: 6px 0;
+  }
+
+  /* Buttons full-width on phone */
+  .sell-confirm-button,
+  .add-new-diary-button,
+  .add-new-collection-button {
+    max-width: 100%;
+  }
+
+  /* Minting modal card */
+  .minted-success {
+    width: calc(100vw - 40px);
+  }
+
+  /* Rich editor toolbar wraps cleanly */
+  .tiptap {
+    font-size: 14px;
+  }
+}
+
