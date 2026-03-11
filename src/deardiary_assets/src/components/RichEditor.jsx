@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
@@ -50,6 +50,8 @@ function Divider() {
 
 function RichEditor({ onChange, disabled }) {
     const colorInputRef = useRef(null);
+    const [showLinkInput, setShowLinkInput] = useState(false);
+    const [linkValue, setLinkValue] = useState('');
 
     const editor = useEditor({
         extensions: [
@@ -83,14 +85,19 @@ function RichEditor({ onChange, disabled }) {
     };
 
     const handleLink = () => {
-        const prev = editor.getAttributes('link').href || '';
-        const url = window.prompt('URL', prev);
-        if (url === null) return;
-        if (url === '') {
+        setLinkValue(editor.getAttributes('link').href || '');
+        setShowLinkInput(v => !v);
+    };
+
+    const confirmLink = () => {
+        if (linkValue === '') {
             editor.chain().focus().extendMarkRange('link').unsetLink().run();
         } else {
-            editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+            const href = linkValue.startsWith('http') ? linkValue : `https://${linkValue}`;
+            editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
         }
+        setShowLinkInput(false);
+        setLinkValue('');
     };
 
     return (
@@ -222,6 +229,30 @@ function RichEditor({ onChange, disabled }) {
                     <span className="material-icons" style={{ fontSize: 16 }}>link</span>
                 </ToolBtn>
             </div>
+
+            {/* Inline link popover */}
+            {showLinkInput && (
+                <div style={{
+                    display: 'flex', alignItems: 'center', gap: 6,
+                    padding: '6px 10px', borderBottom: '1px solid #e5e7eb', background: '#f9fafb',
+                }}>
+                    <span className="material-icons" style={{ fontSize: 16, color: '#6b7280' }}>link</span>
+                    <input
+                        autoFocus
+                        type="url"
+                        value={linkValue}
+                        onChange={(e) => setLinkValue(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') confirmLink(); if (e.key === 'Escape') setShowLinkInput(false); }}
+                        placeholder="https://example.com"
+                        style={{
+                            flex: 1, border: '1px solid #d1d5db', borderRadius: 4,
+                            padding: '3px 8px', fontSize: 13, outline: 'none',
+                        }}
+                    />
+                    <button type="button" onClick={confirmLink} style={{ background: '#1a56db', color: '#fff', border: 'none', borderRadius: 4, padding: '3px 10px', cursor: 'pointer', fontSize: 13 }}>Apply</button>
+                    <button type="button" onClick={() => setShowLinkInput(false)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#6b7280', fontSize: 18, lineHeight: 1 }}>×</button>
+                </div>
+            )}
 
             {/* Editor area */}
             <EditorContent

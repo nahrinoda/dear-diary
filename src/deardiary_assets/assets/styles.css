@@ -85,7 +85,12 @@ label {
 header {
   height: 60px;
   position: fixed;
-  display: contents;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #D9D6D2;
+  z-index: 100;
+  display: block;
 }
 
 .landing-page-container {
@@ -163,12 +168,12 @@ header {
 }
 
 footer {
-  position: absolute;
+  position: relative;
   text-align: center;
-  bottom: 0;
   width: 100%;
   height: 2rem;
   opacity: 0.4;
+  margin-top: auto;
 }
 
 footer p {
@@ -718,4 +723,55 @@ footer p {
   float: left;
   height: 0;
   pointer-events: none;
+}
+
+/* ── Active nav link ─────────────────────────────────────── */
+.nav-active {
+  font-weight: 700;
+  border-bottom: 2px solid #F7A654 !important;
+  border-radius: 0;
+}
+
+/* ── Card skeleton loader ────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.card-skeleton {
+  pointer-events: none;
+}
+
+.skeleton-img {
+  width: 100%;
+  height: 180px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-line.wide  { width: 80%; }
+.skeleton-line.narrow { width: 50%; }
+
+/* ── Card hover transition ───────────────────────────────── */
+.card-container {
+  transition: box-shadow 0.2s ease, transform 0.15s ease;
+}
+.card-container:hover {
+  transform: translateY(-2px);
+}
+
+/* ── Minting modal — relative position for close btn ─────── */
+.minting-modal {
+  position: relative;
 }

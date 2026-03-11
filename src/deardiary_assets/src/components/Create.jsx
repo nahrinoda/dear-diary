@@ -74,6 +74,15 @@ function Create() {
             <Header />
             {showModal && (
                 <div className='minting-modal' onClick={closeModal}>
+                    <button
+                        onClick={closeModal}
+                        style={{
+                            position: 'absolute', top: 16, right: 20,
+                            background: 'none', border: 'none', color: '#fff',
+                            fontSize: 28, cursor: 'pointer', lineHeight: 1,
+                        }}
+                        aria-label="Close"
+                    >×</button>
                     {nftPrincipal && (
                         <>
                             <h2 className="minted-success">MINTED!</h2>
@@ -82,7 +91,16 @@ function Create() {
                                 handleCardOnClick={openGalleryPage}
                                 cardStyle={{ cursor: "pointer" }}
                             />
-                            <p style={{ color: '#fff', marginTop: 12, fontSize: 13 }}>Click the card to view your collection</p>
+                            <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); closeModal(); handleCreateNewDiary(); }}
+                                    className="sell-confirm-button"
+                                >Write another</button>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); openGalleryPage(); }}
+                                    className="sell-confirm-button"
+                                >View collection</button>
+                            </div>
                         </>
                     )}
                 </div>
@@ -91,6 +109,11 @@ function Create() {
                 {createButtonShowing ? (
                     <>
                         <AddButton handleClick={handleCreateNewDiary} buttonName="diary" />
+                        {diaries.length > 0 && (
+                            <p style={{ textAlign: 'center', color: '#8C8C8C', fontSize: 13, margin: '4px 0 12px' }}>
+                                {diaries.length} {diaries.length === 1 ? 'diary' : 'diaries'} saved
+                            </p>
+                        )}
                         <div className='diaries-gallery'>
                             {diaries.map((diary) => (
                                 <Card

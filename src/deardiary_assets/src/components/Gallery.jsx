@@ -39,13 +39,19 @@ function Gallery({ title, role }) {
         <>
             <Header />
             <div className="gallery-page-container">
-                <h2 className="my-nft-title">{title}</h2>
+                <h2 className="my-nft-title">{title}{!loading && !error && items.length > 0 ? ` (${items.length})` : ''}</h2>
                 {loading ? (
                     <div className="lds-ellipsis" style={{ margin: '60px auto' }}>
                         <div></div><div></div><div></div><div></div>
                     </div>
                 ) : error ? (
-                    <p style={{ textAlign: 'center', color: '#DE5B5B', marginTop: '60px' }}>{error}</p>
+                    <div style={{ textAlign: 'center', marginTop: '60px' }}>
+                        <p style={{ color: '#DE5B5B', marginBottom: 12 }}>{error}</p>
+                        <button
+                            className="sell-confirm-button"
+                            onClick={() => { setError(null); setLoading(true); fetchNFTs(); }}
+                        >Try again</button>
+                    </div>
                 ) : items.length === 0 ? (
                     <p style={{ textAlign: 'center', color: '#8C8C8C', marginTop: '60px' }}>
                         {role === 'collection' ? 'No NFTs in your collection yet.' : 'No NFTs listed for sale yet.'}

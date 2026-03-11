@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Actor } from "@icp-sdk/core/agent";
 import { idlFactory } from '../../../declarations/nft';
 import { createActor, canisterId as deardiaryCanisterId } from '../../../declarations/deardiary';
 import { useAuth } from '../AuthContext';
+
+// Neutral gradient used while the real cover image loads or as fallback
+const PLACEHOLDER_IMG = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23d9d6d2'/%3E%3Cstop offset='100%25' style='stop-color:%238c8c8c'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='300' fill='url(%23g)'/%3E%3C/svg%3E";
+
+function truncatePrincipal(p) {
+    if (!p || p.length <= 12) return p;
+    return `${p.slice(0, 6)}…${p.slice(-4)}`;
+}
 
 function Card({
     id,
@@ -19,212 +27,224 @@ function Card({
 }) {
     const { agent, principal } = useAuth();
 
-    const [label, setLabel] = useState();
-    const [owner, setOwner] = useState();
-    const [content, setContent] = useState();
-    const [button, setButton] = useState();
-    const [priceInput, setPriceInput] = useState();
-    const [priceListing, setPriceListing] = useState();
-    const [blur, setBlur] = useState();
+    // P1 fix: use ref so NFTActor persists across re-renders without being reset
+    const NFTActorRef = useRef(null);
+
+    const [label, setLabel] = useState(null);
+    const [owner, setOwner] = useState(null);
     const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState(false);
 
-    const currentId = id;
+    const [button, setButton] = useState(null);
+    const [priceListing, setPriceListing] = useState(null);
 
-    // NFTActor is set during loadNFT and reused in handleSell
-    let NFTActor;
+    // P1 fix: price in state so it survives re-renders caused by setButton
+    const [sellPrice, setSellPrice] = useState('');
+    const [showPriceInput, setShowPriceInput] = useState(false);
+
+    const [blur, setBlur] = useState(null);
 
     const loadNFT = async () => {
-        // Use the authenticated agent from context — carries the user identity
-        NFTActor = await Actor.createActor(idlFactory, {
-            agent,
-            canisterId: currentId,
-        });
+        try {
+            NFTActorRef.current = Actor.createActor(idlFactory, {
+                agent,
+                canisterId: id,
+            });
+            const deardiary = createActor(deardiaryCanisterId, { agent });
 
-        const deardiary = createActor(deardiaryCanisterId, { agent });
+            const [fetchedLabel, imageBytes, fetchedOwner] = await Promise.all([
+                NFTActorRef.current.getLabel(),
+                NFTActorRef.current.getCoverImage(),
+                NFTActorRef.current.getOwner(),
+            ]);
 
-        const label = await NFTActor.getLabel();
-        setLabel(label);
+            setLabel(fetchedLabel);
+            setOwner(fetchedOwner.toText());
 
-        const imageBytes = await NFTActor.getCoverImage();
-        if (imageBytes && imageBytes.length > 0) {
-            const blob = new Blob([new Uint8Array(imageBytes)]);
-            setImage(URL.createObjectURL(blob));
-        }
-
-        const owner = await NFTActor.getOwner();
-        const ownerToText = owner.toText();
-        setOwner(ownerToText);
-
-        const content = await NFTActor.getContent();
-        setContent(content);
-
-        if (role === "collection") {
-            const nftIsListed = await deardiary.isListed(id);
-
-            if (nftIsListed) {
-                setOwner("DearDiary");
-                setBlur({ filter: "blur(2px)" });
-                setButton(<div className="listed-banner">LISTED</div>);
-            } else {
-                setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
-            };
-
-        } else if (role === "discover") {
-            const originalOwner = await deardiary.getOriginalOwner(id);
-            if (originalOwner.toText() !== principal.toText()) {
-                setButton(<button onClick={handleBuy} className="sell-confirm-button">Buy</button>);
-            } else {
-                setButton(<div className="listed-banner">You own this NFT</div>);
+            if (imageBytes && imageBytes.length > 0) {
+                const blob = new Blob([new Uint8Array(imageBytes)]);
+                setImage(URL.createObjectURL(blob));
             }
 
-            const price = await deardiary.getListedNFTPrice(id);
+            if (role === "collection" || role === "diaries") {
+                const nftIsListed = await deardiary.isListed(id);
+                if (nftIsListed) {
+                    setOwner("DearDiary");
+                    setBlur({ filter: "blur(2px)" });
+                    setButton('listed');
+                } else {
+                    setButton('sell');
+                }
 
-            setPriceListing(
-                <div className="card-listing">
-                    <b className="add-margin">Price: </b>
-                    {price.toString()}
-                    <span className="material-icons md-18">currency_bitcoin</span>
-                </div>
-            );
-        } else if (role === "diaries") {
-            const nftIsListed = await deardiary.isListed(id);
+            } else if (role === "discover") {
+                const [originalOwner, price] = await Promise.all([
+                    deardiary.getOriginalOwner(id),
+                    deardiary.getListedNFTPrice(id),
+                ]);
 
-            if (nftIsListed) {
-                setOwner("DearDiary");
-                setBlur({ filter: "blur(2px)" });
-                setButton(<div className="listed-banner">LISTED</div>);
-            } else {
-                setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
-            };
+                if (originalOwner.toText() !== principal.toText()) {
+                    setButton('buy');
+                } else {
+                    setButton('mine');
+                }
+
+                setPriceListing(
+                    <div className="card-listing">
+                        <b className="add-margin">Price: </b>
+                        {price.toString()}
+                        <span className="material-icons md-18">currency_bitcoin</span>
+                    </div>
+                );
+            }
+        } catch (err) {
+            console.error('loadNFT failed:', err);
+            setLoadError(true);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        loadNFT();
+        if (isCardMinted) loadNFT();
+        else setLoading(false);
     }, []);
 
-    let price;
+    const handleDelete = () => onDelete(id);
+    const handleMint = () => onMint(id);
 
-    const handleDelete = (e) => {
-        onDelete(id);
+    const handleOnClick = () => {
+        setShowPriceInput(true);
+        setButton('confirm');
     };
 
-    const handleEdit = (e) => {
-        onEdit(id);
-    };
-
-    const handleMint = (e) => {
-        onMint(id);
-    };
-
-    const handlePriceChange = (e) => {
-        price = e.target.value;
-    };
-
-    const handleOnClick = (e) => {
-        setPriceInput(
-            <div className="nft-price-container">
-                <span className="material-icons md-18 add-margin">
-                    currency_bitcoin
-                </span>
-                <input
-                    className="nft-price"
-                    name="nft-price"
-                    type="number"
-                    placeholder="Enter price here"
-                    value={price}
-                    onChange={handlePriceChange}
-                />
-            </div>
-        );
-        setButton(<button onClick={handleSell} className="sell-confirm-button">Confirm</button>)
-    };
-
-    const handleBuy = async (e) => {
-        const deardiary = createActor(deardiaryCanisterId, { agent });
-
-        setButton(
-            <button className="sell-confirm-button">
-                <div className="lds-ellipsis">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </button>
-        );
-
-        const result = await deardiary.completePurchase(id);
-        if (result === "Success") {
-            setButton(<div className="listed-banner">You own this NFT</div>);
-            setPriceListing(null);
-        } else {
-            setButton(<button onClick={handleBuy} className="sell-confirm-button">Buy</button>);
-            console.error("Purchase failed:", result);
+    const handleBuy = async () => {
+        setButton('loading');
+        try {
+            const deardiary = createActor(deardiaryCanisterId, { agent });
+            const result = await deardiary.completePurchase(id);
+            if (result === "Success") {
+                setButton('mine');
+                setPriceListing(null);
+            } else {
+                console.error("Purchase failed:", result);
+                setButton('buy');
+            }
+        } catch (err) {
+            console.error("Buy error:", err);
+            setButton('buy');
         }
     };
 
-    const handleSell = async (e) => {
-        const deardiary = createActor(deardiaryCanisterId, { agent });
-
+    const handleSell = async () => {
+        if (!NFTActorRef.current) return;
         setBlur({ filter: "blur(2px)" });
-        setButton(
-            <button className="sell-confirm-button">
-                <div className="lds-ellipsis">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-            </button>
-        );
-        const listingResult = await deardiary.listItem(id, Number(price));
-        if (listingResult == "Success") {
-            const dearDiaryId = await deardiary.getDearDiaryCanisterID();
-            const transferResult = await NFTActor.transferOwnership(dearDiaryId);
-            if (transferResult == "Success") {
-                setButton(<div className="listed-banner">LISTED</div>);
-                setPriceInput();
-                setOwner("DearDiary");
-            };
-        };
+        setButton('loading');
+        try {
+            const deardiary = createActor(deardiaryCanisterId, { agent });
+            const listingResult = await deardiary.listItem(id, Number(sellPrice));
+            if (listingResult === "Success") {
+                const dearDiaryId = await deardiary.getDearDiaryCanisterID();
+                const transferResult = await NFTActorRef.current.transferOwnership(dearDiaryId);
+                if (transferResult === "Success") {
+                    setButton('listed');
+                    setShowPriceInput(false);
+                    setOwner("DearDiary");
+                } else {
+                    setBlur(null);
+                    setButton('sell');
+                }
+            } else {
+                setBlur(null);
+                setButton('sell');
+            }
+        } catch (err) {
+            console.error("Sell error:", err);
+            setBlur(null);
+            setButton('sell');
+        }
     };
+
+    const renderButton = () => {
+        switch (button) {
+            case 'sell':    return <button onClick={handleOnClick} className="sell-confirm-button">Sell</button>;
+            case 'confirm': return <button onClick={handleSell} className="sell-confirm-button">Confirm</button>;
+            case 'buy':     return <button onClick={handleBuy} className="sell-confirm-button">Buy</button>;
+            case 'listed':  return <div className="listed-banner">LISTED</div>;
+            case 'mine':    return <div className="listed-banner">You own this</div>;
+            case 'loading': return (
+                <button className="sell-confirm-button">
+                    <div className="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                </button>
+            );
+            default: return null;
+        }
+    };
+
+    // Skeleton shown while async data loads
+    if (loading) {
+        return (
+            <div className="card-container card-skeleton" style={cardStyle}>
+                <div className="skeleton-img" />
+                <div className="skeleton-line wide" />
+                <div className="skeleton-line narrow" />
+            </div>
+        );
+    }
+
+    if (loadError) {
+        return (
+            <div className="card-container" style={cardStyle}>
+                <div style={{ padding: 16, color: '#DE5B5B', fontSize: 13, textAlign: 'center' }}>
+                    Failed to load NFT
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="card-container" onClick={handleCardOnClick} style={cardStyle}>
-            {
-                isCardMinted ? (
-                    <>
-                        <div>
-                            <div className="card-content" style={blur}>
-                                <img
-                                    className='cover-image'
-                                    src={image || "https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"}
-                                />
-                            </div>
-                            <div className="card-title"><b>Title: </b>{label}</div>
-                            <div className="card-owner"><b>Owner: </b>{owner}</div>
-                            {priceListing}
-                        </div>
-                        <div className="card-buttons-container">
-                            {priceInput}
-                            {button}
-                        </div>
-                    </>
-                ) : (
-                    <div className='static-card-content'>
-                        <div className="card-content">
+            {isCardMinted ? (
+                <>
+                    <div>
+                        <div className="card-content" style={blur}>
                             <img
                                 className='cover-image'
-                                src="https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                                src={image || PLACEHOLDER_IMG}
                             />
                         </div>
-                        <div className="card-title"><b>Title: </b>{staticTitle}</div>
-                        <button onClick={handleMint}>Mint</button>
-                        <button onClick={handleDelete}>Delete</button>
+                        <div className="card-title"><b>Title: </b>{label}</div>
+                        <div className="card-owner"><b>Owner: </b>{truncatePrincipal(owner)}</div>
+                        {priceListing}
                     </div>
-                )
-            }
+                    <div className="card-buttons-container">
+                        {showPriceInput && (
+                            <div className="nft-price-container">
+                                <span className="material-icons md-18 add-margin">currency_bitcoin</span>
+                                <input
+                                    className="nft-price"
+                                    name="nft-price"
+                                    type="number"
+                                    min="0"
+                                    placeholder="Enter price"
+                                    value={sellPrice}
+                                    onChange={(e) => setSellPrice(e.target.value)}
+                                />
+                            </div>
+                        )}
+                        {renderButton()}
+                    </div>
+                </>
+            ) : (
+                <div className='static-card-content'>
+                    <div className="card-content">
+                        <img className='cover-image' src={PLACEHOLDER_IMG} />
+                    </div>
+                    <div className="card-title"><b>Title: </b>{staticTitle}</div>
+                    <button onClick={handleMint}>Mint</button>
+                    <button onClick={handleDelete}>Delete</button>
+                </div>
+            )}
         </div>
     );
 }
