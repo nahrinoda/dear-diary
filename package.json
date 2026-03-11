@@ -21,20 +21,20 @@
   "devDependencies": {
     "assert": "2.0.0",
     "buffer": "6.0.3",
-    "copy-webpack-plugin": "^10.2.4",
+    "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^6.5.1",
     "events": "3.3.0",
     "html-webpack-plugin": "5.5.0",
     "process": "0.11.10",
     "stream-browserify": "3.0.0",
     "style-loader": "^3.3.1",
-    "terser-webpack-plugin": "5.3.1",
+    "terser-webpack-plugin": "^5.3.17",
     "ts-loader": "^9.2.6",
     "typescript": "^4.5.5",
     "util": "0.12.4",
-    "webpack": "5.69.1",
-    "webpack-cli": "4.10.0",
-    "webpack-dev-server": "^4.4.0"
+    "webpack": "^5.105.4",
+    "webpack-cli": "^5.0.0",
+    "webpack-dev-server": "^5.2.3"
   },
   "dependencies": {
     "@icp-sdk/auth": "5.0.0",
