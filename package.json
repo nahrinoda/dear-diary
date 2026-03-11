@@ -39,8 +39,6 @@
   "dependencies": {
     "@icp-sdk/auth": "5.0.0",
     "@icp-sdk/core": "5.0.0",
-    "@material-ui/core": "4.6.1",
-    "@material-ui/icons": "^4.5.1",
     "@tiptap/extension-color": "^3.20.1",
     "@tiptap/extension-link": "^3.20.1",
     "@tiptap/extension-text-align": "^3.20.1",
