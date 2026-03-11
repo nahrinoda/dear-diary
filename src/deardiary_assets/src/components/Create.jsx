@@ -22,10 +22,13 @@ function Create() {
     }, []);
 
     const fetchData = async () => {
-        const deardiary = createActor(canisterId, { agent });
-        const diariesArray = await deardiary.readDiaries();
-        // Attach a stable local ID to each diary so deletion is index-safe
-        setDiaries(diariesArray.map(d => ({ ...d, localId: uuidv4() })));
+        try {
+            const deardiary = createActor(canisterId, { agent });
+            const diariesArray = await deardiary.readDiaries();
+            setDiaries(diariesArray.map(d => ({ ...d, localId: uuidv4() })));
+        } catch (err) {
+            console.error('fetchData failed:', err);
+        }
     };
 
     const handleAddingDiary = async (newDiary) => {

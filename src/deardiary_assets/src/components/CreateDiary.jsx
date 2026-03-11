@@ -3,16 +3,21 @@ import { useForm } from "react-hook-form";
 import { createActor, canisterId } from '../../../declarations/deardiary';
 import { useAuth } from '../AuthContext';
 
-async function generateCoverImage(title, content) {
-    const prompt = encodeURIComponent(
-        `${title}. ${content.slice(0, 120)}. digital art, diary cover, painterly, warm tones`
-    );
-    const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true&seed=${Date.now()}`;
-    const response = await fetch(url);
-    if (!response.ok) throw new Error('Image generation failed');
-    const blob = await response.blob();
-    const arrayBuffer = await blob.arrayBuffer();
-    return { bytes: [...new Uint8Array(arrayBuffer)], objectUrl: URL.createObjectURL(blob) };
+async function generateCoverImage(title) {
+    const prompt = encodeURIComponent(`${title}, diary journal cover art, painterly, warm tones, soft light`);
+    const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true`;
+
+    // Pollinations can return 5xx on first attempt — retry up to 3 times
+    for (let attempt = 1; attempt <= 3; attempt++) {
+        const response = await fetch(url);
+        if (response.ok) {
+            const blob = await response.blob();
+            const arrayBuffer = await blob.arrayBuffer();
+            return { bytes: [...new Uint8Array(arrayBuffer)], objectUrl: URL.createObjectURL(blob) };
+        }
+        if (attempt === 3) throw new Error(`Image generation failed (${response.status})`);
+        await new Promise(r => setTimeout(r, 1500 * attempt));
+    }
 }
 
 function CreateDiary({ handleCloseDiary, onMintSuccess }) {
@@ -28,7 +33,7 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
         setMintError('');
         try {
             setStatus('generating');
-            const { bytes, objectUrl } = await generateCoverImage(data.title, data.content);
+            const { bytes, objectUrl } = await generateCoverImage(data.title);
             setCoverImage(objectUrl);
 
             setStatus('minting');
