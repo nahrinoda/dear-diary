@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
-import { deardiary } from '../../../declarations/deardiary';
-import { Principal } from '@icp-sdk/core/principal';
+import { createActor, canisterId } from '../../../declarations/deardiary';
+import { useAuth } from '../AuthContext';
 
 function CreateDiary({ handleCloseDiary }) {
     const { register, handleSubmit } = useForm();
     const [currentImage, setCurrentImage] = useState('');
+    const { agent } = useAuth();
 
     async function onSubmit(data) {
+        const deardiary = createActor(canisterId, { agent });
         const title = data.title;
         const content = data.content;
         const image = data.image[0];
         const imageByteData = [...new Uint8Array(await image.arrayBuffer())];
         setCurrentImage(URL.createObjectURL(image));
         const newNFTId = await deardiary.mint(title, content, imageByteData);
-        console.log(newNFTId.toText())
+        console.log(newNFTId.toText());
     };
 
-    // const saveButtonStyle = isSaveBtnDisabled ? 'button-inactive' : 'button';
-    // const saveButtonTitle = isDiaryEddited ? 'edit' : 'save';
     return (
         <div className="diary">
             <div className='diary-controls'>
@@ -35,7 +35,6 @@ function CreateDiary({ handleCloseDiary }) {
                         id="save-button"
                         className={'save-button'}
                         onClick={handleSubmit(onSubmit)}
-                    // disabled={isSaveBtnDisabled}
                     >
                         <span className='material-icons md-18'>save</span>
                     </button>
@@ -48,8 +47,8 @@ function CreateDiary({ handleCloseDiary }) {
                     </button>
                 </div>
             </div>
-            {/* <div className='cover-image-input'> */}
-                {/* <label htmlFor="inputTag"> */}
+            <div className='cover-image-input'>
+                <label htmlFor="inputTag">
                     <input
                         {...register("image", { required: true })}
                         id="inputTag"
@@ -57,10 +56,10 @@ function CreateDiary({ handleCloseDiary }) {
                         type="file"
                         accept="image/x-png,image/jpeg,image/gif,image/svg+xml,image/webp"
                     />
-                    {/* {currentImage.length === 0 && <span className="material-icons add-photo-icon">add_photo_alternate</span>} */}
-                {/* </label> */}
-                {/* {currentImage.length > 0 && <img className="diary-cover-image" src={currentImage} />} */}
-            {/* </div> */}
+                    {currentImage.length === 0 && <span className="material-icons add-photo-icon">add_photo_alternate</span>}
+                </label>
+                {currentImage.length > 0 && <img className="diary-cover-image" src={currentImage} />}
+            </div>
             <textarea
                 {...register("content", { required: true })}
                 className='diary-content'

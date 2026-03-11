@@ -26,6 +26,7 @@ function Card({
     const [priceInput, setPriceInput] = useState();
     const [priceListing, setPriceListing] = useState();
     const [blur, setBlur] = useState();
+    const [image, setImage] = useState(null);
 
     const currentId = id;
 
@@ -43,6 +44,12 @@ function Card({
 
         const label = await NFTActor.getLabel();
         setLabel(label);
+
+        const imageBytes = await NFTActor.getCoverImage();
+        if (imageBytes && imageBytes.length > 0) {
+            const blob = new Blob([new Uint8Array(imageBytes)]);
+            setImage(URL.createObjectURL(blob));
+        }
 
         const owner = await NFTActor.getOwner();
         const ownerToText = owner.toText();
@@ -192,7 +199,7 @@ function Card({
                             <div className="card-content" style={blur}>
                                 <img
                                     className='cover-image'
-                                    src="https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"
+                                    src={image || "https://images.unsplash.com/photo-1488654715439-fbf461f0eb8d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Nnx8c3F1YXJlfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60"}
                                 />
                             </div>
                             <div className="card-title"><b>Title: </b>{label}</div>
