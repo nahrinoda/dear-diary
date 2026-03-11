@@ -4,7 +4,7 @@ import Create from './Create';
 import Discover from './Discover';
 import Gallery from './Gallery';
 import LandingPage from './LandingPage';
-import { Principal } from "@dfinity/principal";
+import { Principal } from "@icp-sdk/core/principal";
 import { deardiary } from '../../../declarations/deardiary';
 import CURRENT_USER_ID from '../index';
 
@@ -27,7 +27,7 @@ function App() {
     }, []);
 
     return (
-        <BrowserRouter getUserConfirmation={true}>
+        <BrowserRouter>
             <Routes>
                 <Route exact="true" path="/" element={<LandingPage />} />
                 <Route path="/discover" element={listingGallery} />

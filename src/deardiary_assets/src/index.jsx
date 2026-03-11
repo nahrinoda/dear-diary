@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./components/App";
-import { Principal } from "@dfinity/principal";
-import { AuthClient } from "@dfinity/auth-client";
+import { Principal } from "@icp-sdk/core/principal";
+import { AuthClient } from "@icp-sdk/auth/client";
 
 const CURRENT_USER_ID = Principal.fromText("2vxsx-fae");
 export default CURRENT_USER_ID;

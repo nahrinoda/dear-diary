@@ -3,7 +3,7 @@ import CreateDiary from './CreateDiary';
 import Card from './Card';
 import { deardiary } from '../../../declarations/deardiary';
 import { useNavigate } from "react-router-dom";
-import { Principal } from '@dfinity/principal';
+import { Principal } from '@icp-sdk/core/principal';
 import Header from './Header';
 import AddButton from './AddButton';
 

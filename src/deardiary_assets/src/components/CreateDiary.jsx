@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { deardiary } from '../../../declarations/deardiary';
-import { Principal } from '@dfinity/principal';
+import { Principal } from '@icp-sdk/core/principal';
 
 function CreateDiary({ handleCloseDiary }) {
     const { register, handleSubmit } = useForm();

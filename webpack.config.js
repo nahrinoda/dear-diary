@@ -27,6 +27,8 @@ function initCanisterEnv() {
 
   const canisterConfig = network === "local" ? localCanisters : prodCanisters;
 
+  if (!canisterConfig) return {};
+
   return Object.entries(canisterConfig).reduce((prev, current) => {
     const [canisterName, canisterDetails] = current;
     prev[canisterName.toUpperCase() + "_CANISTER_ID"] =

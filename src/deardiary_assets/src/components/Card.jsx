@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Actor, HttpAgent } from "@dfinity/agent";
+import { Actor, HttpAgent } from "@icp-sdk/core/agent";
 import { idlFactory } from '../../../declarations/nft';
 import { deardiary } from '../../../declarations/deardiary';
-import { Principal } from '@dfinity/principal';
+import { Principal } from '@icp-sdk/core/principal';
 import CURRENT_USER_ID from '../index';
 
 function Card({
