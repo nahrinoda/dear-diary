@@ -8,21 +8,29 @@ async function generateCoverImage(title) {
     const prompt = encodeURIComponent(`${title}, diary journal cover art, painterly, warm tones, soft light`);
     const url = `https://image.pollinations.ai/prompt/${prompt}?width=512&height=512&nologo=true`;
 
-    // Pollinations can return 5xx on first attempt — retry up to 3 times
+    // Retry up to 3 times with a 15-second timeout per attempt
     for (let attempt = 1; attempt <= 3; attempt++) {
-        const response = await fetch(url);
-        if (response.ok) {
-            const blob = await response.blob();
-            const arrayBuffer = await blob.arrayBuffer();
-            return { bytes: [...new Uint8Array(arrayBuffer)], objectUrl: URL.createObjectURL(blob) };
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 15000);
+        try {
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timer);
+            if (response.ok) {
+                const blob = await response.blob();
+                const arrayBuffer = await blob.arrayBuffer();
+                return { bytes: [...new Uint8Array(arrayBuffer)], objectUrl: URL.createObjectURL(blob) };
+            }
+        } catch (_) {
+            clearTimeout(timer);
         }
-        if (attempt === 3) throw new Error(`Image generation failed (${response.status})`);
-        await new Promise(r => setTimeout(r, 1500 * attempt));
+        if (attempt < 3) await new Promise(r => setTimeout(r, 1500 * attempt));
     }
+    // Cover art is optional — return null so the diary can still be saved
+    return null;
 }
 
 function CreateDiary({ handleCloseDiary, onMintSuccess }) {
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit } = useForm();
     const [coverImage, setCoverImage] = useState(null);
     const [status, setStatus] = useState('');  // '' | 'generating' | 'minting'
     const [mintError, setMintError] = useState('');
@@ -46,8 +54,9 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
         setMintError('');
         try {
             setStatus('generating');
-            const { bytes, objectUrl } = await generateCoverImage(data.title);
-            setCoverImage(objectUrl);
+            const coverResult = await generateCoverImage(data.title);
+            if (coverResult) setCoverImage(coverResult.objectUrl);
+            const bytes = coverResult ? coverResult.bytes : [];
 
             setStatus('minting');
             const deardiary = createActor(canisterId, { agent });

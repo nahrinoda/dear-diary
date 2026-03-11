@@ -27,14 +27,22 @@ function initCanisterEnv() {
 
   const canisterConfig = network === "local" ? localCanisters : prodCanisters;
 
-  if (!canisterConfig) return {};
+  // Seed from process.env so Vercel / CI env vars work without canister_ids.json
+  const envVars = Object.keys(process.env)
+    .filter((k) => k.startsWith("CANISTER_ID_"))
+    .reduce((acc, k) => ({ ...acc, [k]: process.env[k] }), {});
 
-  return Object.entries(canisterConfig).reduce((prev, current) => {
+  if (!canisterConfig) return envVars;
+
+  const fileVars = Object.entries(canisterConfig).reduce((prev, current) => {
     const [canisterName, canisterDetails] = current;
     prev["CANISTER_ID_" + canisterName.toUpperCase()] =
       canisterDetails[network];
     return prev;
   }, {});
+
+  // File takes precedence over env, but env fills gaps (e.g. no canister_ids.json)
+  return { ...envVars, ...fileVars };
 }
 const canisterEnvVariables = initCanisterEnv();
 
