@@ -8,7 +8,7 @@ import { AuthContext } from '../AuthContext';
 function App({ identity, principal, agent }) {
     return (
         <AuthContext.Provider value={{ identity, principal, agent }}>
-            <BrowserRouter>
+            <BrowserRouter basename={process.env.PUBLIC_BASENAME || "/"}>
                 <Routes>
                     <Route exact="true" path="/" element={<LandingPage />} />
                     <Route path="/discover" element={<Gallery title="Discover" role="discover" />} />

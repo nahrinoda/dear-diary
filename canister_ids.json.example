@@ -1,0 +1,11 @@
+{
+  "deardiary": {
+    "ic": "REPLACE_WITH_DEARDIARY_CANISTER_ID"
+  },
+  "nft": {
+    "ic": "REPLACE_WITH_NFT_CANISTER_ID"
+  },
+  "deardiary_assets": {
+    "ic": "REPLACE_WITH_ASSETS_CANISTER_ID"
+  }
+}

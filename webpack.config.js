@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 function initCanisterEnv() {
   let localCanisters, prodCanisters;
@@ -70,6 +71,12 @@ module.exports = {
   output: {
     filename: "index.js",
     path: path.join(__dirname, "dist", frontendDirectory),
+    // "auto" emits relative asset paths — the bundle works correctly
+    // whether served from / or any sub-path (e.g. /dear-diary/)
+    publicPath: "auto",
+    // Always clean dist before building so stale production-copied files
+    // don't conflict with DFX's asset serving in local dev.
+    clean: true,
   },
   module: {
     rules: [
@@ -89,8 +96,17 @@ module.exports = {
     // CopyPlugin removed — DFX serves assets directly from src/deardiary_assets/assets
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
+      // PUBLIC_BASENAME controls React Router's base path.
+      // Set to "/dear-diary" when serving from navox.tech/dear-diary.
+      // Defaults to "/" for local dev and standalone deployments.
+      PUBLIC_BASENAME: "/",
       ...canisterEnvVariables,
     }),
+    // In production (Vercel), copy static assets so dist/ is self-contained.
+    // DFX serves these directly from src/deardiary_assets/assets/ in local dev.
+    ...(!isDevelopment ? [new CopyPlugin({
+      patterns: [{ from: "src/deardiary_assets/assets", to: "." }],
+    })] : []),
     new webpack.ProvidePlugin({
       Buffer: [require.resolve("buffer/"), "Buffer"],
       process: require.resolve("process/browser"),
