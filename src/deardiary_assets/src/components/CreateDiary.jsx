@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useForm } from "react-hook-form";
 import { createActor, canisterId } from '../../../declarations/deardiary';
 import { useAuth } from '../AuthContext';
+import RichEditor from './RichEditor';
 
 async function generateCoverImage(title) {
     const prompt = encodeURIComponent(`${title}, diary journal cover art, painterly, warm tones, soft light`);
@@ -25,11 +26,23 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
     const [coverImage, setCoverImage] = useState(null);
     const [status, setStatus] = useState('');  // '' | 'generating' | 'minting'
     const [mintError, setMintError] = useState('');
+    const [titleError, setTitleError] = useState('');
     const { agent } = useAuth();
+    const richContent = useRef('');
 
     const isBusy = status !== '';
 
     async function onSubmit(data) {
+        if (!data.title || !data.title.trim()) {
+            setTitleError('Title is required');
+            return;
+        }
+        const content = richContent.current;
+        if (!content || content === '<p></p>') {
+            setMintError('Please write something in your diary first.');
+            return;
+        }
+        setTitleError('');
         setMintError('');
         try {
             setStatus('generating');
@@ -38,7 +51,7 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
 
             setStatus('minting');
             const deardiary = createActor(canisterId, { agent });
-            const newNFTId = await deardiary.mint(data.title, data.content, bytes);
+            const newNFTId = await deardiary.mint(data.title, content, bytes);
             if (onMintSuccess) onMintSuccess(newNFTId);
         } catch (err) {
             console.error('Failed:', err);
@@ -53,13 +66,13 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
             <div className='diary-controls'>
                 <div className='diary-label-container'>
                     <input
-                        {...register("title", { required: "Title is required" })}
+                        {...register("title")}
                         type="text"
                         className='label'
                         placeholder='Diary Label'
                         disabled={isBusy}
                     />
-                    {errors.title && <span style={{ color: '#DE5B5B', fontSize: '12px' }}>{errors.title.message}</span>}
+                    {titleError && <span style={{ color: '#DE5B5B', fontSize: '12px' }}>{titleError}</span>}
                 </div>
                 <div className='buttons-container'>
                     <button
@@ -105,17 +118,17 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
                 {!coverImage && status === '' && (
                     <div style={{ textAlign: 'center', color: '#8C8C8C', padding: '16px', fontSize: '13px' }}>
                         <span className="material-icons" style={{ fontSize: 32, display: 'block', marginBottom: 4 }}>auto_awesome</span>
-                        AI will generate a cover image from your title &amp; content when you save
+                        AI will generate a cover image from your title when you save
                     </div>
                 )}
             </div>
 
-            <textarea
-                {...register("content", { required: true })}
-                className='diary-content'
-                placeholder='Start writing your thoughts here...'
-                disabled={isBusy}
-            />
+            <div style={{ padding: '0 16px 16px' }}>
+                <RichEditor
+                    onChange={(html) => { richContent.current = html; }}
+                    disabled={isBusy}
+                />
+            </div>
         </div>
     );
 }

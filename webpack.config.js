@@ -56,6 +56,9 @@ module.exports = {
   },
   resolve: {
     extensions: [".js", ".ts", ".jsx", ".tsx"],
+    alias: {
+      "react/jsx-runtime": require.resolve("react/jsx-runtime"),
+    },
     fallback: {
       assert: require.resolve("assert/"),
       buffer: require.resolve("buffer/"),

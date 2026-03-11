@@ -674,3 +674,48 @@ footer p {
     transform: translate(24px, 0);
   }
 }
+/* ── Rich Editor (Tiptap) ─────────────────────────────────── */
+.tiptap {
+  padding: 12px 16px;
+  min-height: 200px;
+  outline: none;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #374151;
+  resize: vertical;
+  overflow-y: auto;
+}
+
+.tiptap p { margin: 0 0 8px; }
+.tiptap h1 { font-size: 1.8em; margin: 12px 0 6px; }
+.tiptap h2 { font-size: 1.5em; margin: 10px 0 5px; }
+.tiptap h3 { font-size: 1.25em; margin: 8px 0 4px; }
+.tiptap h4, .tiptap h5, .tiptap h6 { font-size: 1em; font-weight: 700; margin: 6px 0 3px; }
+
+.tiptap ul, .tiptap ol { padding-left: 24px; margin: 6px 0; }
+.tiptap li { margin-bottom: 2px; }
+
+.tiptap blockquote {
+  border-left: 3px solid #93c5fd;
+  margin: 8px 0;
+  padding: 6px 12px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+.tiptap hr {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 12px 0;
+}
+
+.tiptap a { color: #1a56db; text-decoration: underline; }
+
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: #9ca3af;
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
