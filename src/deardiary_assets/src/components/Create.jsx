@@ -6,21 +6,16 @@ import { useNavigate } from "react-router-dom";
 import Header from './Header';
 import AddButton from './AddButton';
 import { useAuth } from '../AuthContext';
-
+import { v4 as uuidv4 } from 'uuid';
 
 function Create() {
     let navigate = useNavigate();
     const { agent } = useAuth();
 
-    const [nftPrincipal, setNftPrincipal] = useState('');
-    const [showLoader, setShowLoader] = useState(false);
+    const [nftPrincipal, setNftPrincipal] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [createButtonShowing, setCreateButtonShowing] = useState(true);
-    const [editTitle, setEditTitle] = useState();
-    const [editContent, setEditContent] = useState();
-    const [isDiaryEddited, setIsDiaryEddited] = useState(false);
     const [diaries, setDiaries] = useState([]);
-
 
     useEffect(() => {
         fetchData();
@@ -29,30 +24,26 @@ function Create() {
     const fetchData = async () => {
         const deardiary = createActor(canisterId, { agent });
         const diariesArray = await deardiary.readDiaries();
-        setDiaries(diariesArray);
+        // Attach a stable local ID to each diary so deletion is index-safe
+        setDiaries(diariesArray.map(d => ({ ...d, localId: uuidv4() })));
     };
 
     const handleAddingDiary = async (newDiary) => {
         const deardiary = createActor(canisterId, { agent });
-        const currentTitle = newDiary.title;
-        const currentContent = newDiary.content;
-        setDiaries((prevDiaries) => {
-            deardiary.createDiary(currentTitle, currentContent);
-            return [newDiary, ...prevDiaries];
-        });
+        const { title, content } = newDiary;
+        await deardiary.createDiary(title, content);
+        setDiaries(prev => [{ ...newDiary, localId: uuidv4() }, ...prev]);
     };
 
-    const handleDeleteDiary = (id) => {
+    const handleDeleteDiary = async (localId) => {
+        const idx = diaries.findIndex(d => d.localId === localId);
+        if (idx === -1) return;
         const deardiary = createActor(canisterId, { agent });
-        deardiary.removeDiaries(id);
-        setDiaries((prevDiary) => {
-            return prevDiary.filter((diary, index) => {
-                return index !== id;
-            })
-        });
+        await deardiary.removeDiaries(idx);
+        setDiaries(prev => prev.filter(d => d.localId !== localId));
     };
 
-    const handleCloseDiary = (e) => {
+    const handleCloseDiary = () => {
         setCreateButtonShowing(true);
     };
 
@@ -60,26 +51,11 @@ function Create() {
         setCreateButtonShowing(false);
     };
 
-    const handleEditDiary = (id) => {
-        setCreateButtonShowing(false);
-        const currentDiary = diaries[id];
-        setEditTitle(currentDiary.title);
-        setEditContent(currentDiary.content);
-        setIsDiaryEddited(true);
-    };
-
-    const handleMintDiaryOnClick = async (id) => {
-        const deardiary = createActor(canisterId, { agent });
-        setShowLoader(true);
-        handleDeleteDiary(id);
-        const title = diaries[id].title;
-        const content = diaries[id].content;
-        const imageArray = await diaries[id].image.arrayBuffer();
-        const imageByteData = [...new Uint8Array(imageArray)];
-        const newNFTID = await deardiary.mint(title, content, imageByteData);
-
-        setNftPrincipal(newNFTID);
-        setShowLoader(false);
+    // Called by CreateDiary after a successful mint
+    const handleMintSuccess = (newNFTId) => {
+        setNftPrincipal(newNFTId);
+        setShowModal(true);
+        setCreateButtonShowing(true);
     };
 
     const closeModal = () => {
@@ -87,61 +63,50 @@ function Create() {
     };
 
     const openGalleryPage = () => {
-        let path = '/collection';
-        navigate(path);
+        navigate('/collection');
     };
 
     return (
         <>
             <Header />
-            {
-                showModal && (
-                    <div className='minting-modal' onClick={closeModal}>
-                        {nftPrincipal !== "" && (
-                            <>
-                                <h2 className="minted-success">MINTED!</h2>
-                                <Card id={nftPrincipal.toText()} handleCardOnClick={openGalleryPage} cardStyle={{ cursor: "pointer" }} />
-                            </>
-                        )}
-                        {showLoader && (
-                            <div className="lds-ellipsis">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
-                        )}
-                    </div>
-                )
-            }
-            <div className="content">
-                {
-                    createButtonShowing ? (
+            {showModal && (
+                <div className='minting-modal' onClick={closeModal}>
+                    {nftPrincipal && (
                         <>
-                            <AddButton handleClick={handleCreateNewDiary} buttonName="diary"  />
-                            <div className='diaries-gallery'>
-                                {diaries.map((diary, index) => {
-                                    return (
-                                        <Card
-                                            key={index}
-                                            id={index}
-                                            staticTitle={diary.title}
-                                            staticContent={diary.content}
-                                            onMint={handleMintDiaryOnClick}
-                                            onDelete={handleDeleteDiary}
-                                            isCardMinted={false}
-                                        />
-                                    )
-                                })}
-                            </div>
+                            <h2 className="minted-success">MINTED!</h2>
+                            <Card
+                                id={nftPrincipal}
+                                handleCardOnClick={openGalleryPage}
+                                cardStyle={{ cursor: "pointer" }}
+                            />
+                            <p style={{ color: '#fff', marginTop: 12, fontSize: 13 }}>Click the card to view your collection</p>
                         </>
-                    ) : (
-                        <CreateDiary
-                            handleCloseDiary={handleCloseDiary}
-                            isDiaryEddited={isDiaryEddited}
-                        />
-                    )
-                }
+                    )}
+                </div>
+            )}
+            <div className="content">
+                {createButtonShowing ? (
+                    <>
+                        <AddButton handleClick={handleCreateNewDiary} buttonName="diary" />
+                        <div className='diaries-gallery'>
+                            {diaries.map((diary) => (
+                                <Card
+                                    key={diary.localId}
+                                    id={diary.localId}
+                                    staticTitle={diary.title}
+                                    staticContent={diary.content}
+                                    onDelete={() => handleDeleteDiary(diary.localId)}
+                                    isCardMinted={false}
+                                />
+                            ))}
+                        </div>
+                    </>
+                ) : (
+                    <CreateDiary
+                        handleCloseDiary={handleCloseDiary}
+                        onMintSuccess={handleMintSuccess}
+                    />
+                )}
             </div>
         </>
     );
