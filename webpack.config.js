@@ -71,9 +71,11 @@ module.exports = {
   output: {
     filename: "index.js",
     path: path.join(__dirname, "dist", frontendDirectory),
-    // "auto" emits relative asset paths — the bundle works correctly
-    // whether served from / or any sub-path (e.g. /dear-diary/)
-    publicPath: "auto",
+    // publicPath controls how asset URLs are emitted in the HTML.
+    // Set PUBLIC_PATH env var to an absolute URL (e.g. https://dear-diary-eight-ochre.vercel.app/)
+    // when the app is proxied via navox.tech/dear-diary so assets bypass the proxy.
+    // Defaults to "auto" (relative paths) for local dev and standalone Vercel deployments.
+    publicPath: process.env.PUBLIC_PATH || "auto",
     // Always clean dist before building so stale production-copied files
     // don't conflict with DFX's asset serving in local dev.
     clean: true,
