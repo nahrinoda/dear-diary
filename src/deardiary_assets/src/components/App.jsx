@@ -4,22 +4,23 @@ import Create from './Create';
 import Discover from './Discover';
 import Gallery from './Gallery';
 import LandingPage from './LandingPage';
-import { Principal } from "@icp-sdk/core/principal";
-import { deardiary } from '../../../declarations/deardiary';
-import CURRENT_USER_ID from '../index';
+import { createActor, canisterId } from '../../../declarations/deardiary';
+import { AuthContext } from '../AuthContext';
 
-
-function App() {
+function App({ identity, principal, agent }) {
     const [userOwnedGallery, setUserOwnedGallery] = useState();
     const [listingGallery, setListingGallery] = useState();
 
     const getNFTs = async () => {
-        const userNFTIds = await deardiary.getOwnedNFTs(CURRENT_USER_ID);
+        // Use the authenticated agent so canister calls are signed with the
+        // real user identity — not the anonymous principal.
+        const deardiary = createActor(canisterId, { agent });
+
+        const userNFTIds = await deardiary.getOwnedNFTs(principal);
         setUserOwnedGallery(<Gallery title="My NFTs" ids={userNFTIds} role="collection" />);
 
         const listedNFTIds = await deardiary.getListedNFTs();
-        console.log(listedNFTIds)
-        setListingGallery(<Gallery title="Discover" ids={listedNFTIds} role="discover" />)
+        setListingGallery(<Gallery title="Discover" ids={listedNFTIds} role="discover" />);
     };
 
     useEffect(() => {
@@ -27,14 +28,16 @@ function App() {
     }, []);
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route exact="true" path="/" element={<LandingPage />} />
-                <Route path="/discover" element={listingGallery} />
-                <Route path="/create" element={<Create />} />
-                <Route path="/collection" element={userOwnedGallery} />
-            </Routes>
-        </BrowserRouter>
+        <AuthContext.Provider value={{ identity, principal, agent }}>
+            <BrowserRouter>
+                <Routes>
+                    <Route exact="true" path="/" element={<LandingPage />} />
+                    <Route path="/discover" element={listingGallery} />
+                    <Route path="/create" element={<Create />} />
+                    <Route path="/collection" element={userOwnedGallery} />
+                </Routes>
+            </BrowserRouter>
+        </AuthContext.Provider>
     );
 }
 

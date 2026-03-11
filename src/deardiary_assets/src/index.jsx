@@ -1,11 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./components/App";
-import { Principal } from "@icp-sdk/core/principal";
 import { AuthClient } from "@icp-sdk/auth/client";
-
-const CURRENT_USER_ID = Principal.fromText("2vxsx-fae");
-export default CURRENT_USER_ID;
+import { HttpAgent } from "@icp-sdk/core/agent";
 
 const init = async () => {
   const authClient = await AuthClient.create();
@@ -22,7 +19,23 @@ const init = async () => {
 };
 
 async function handleAuthenticated(authClient) {
-  ReactDOM.render(<App />, document.getElementById("root"));
+  const identity = authClient.getIdentity();
+  const principal = identity.getPrincipal();
+
+  const host = process.env.DFX_NETWORK === "ic"
+    ? "https://icp-api.io"
+    : "http://localhost:8000";
+
+  const agent = new HttpAgent({ identity, host });
+
+  if (process.env.DFX_NETWORK !== "ic") {
+    await agent.fetchRootKey();
+  }
+
+  ReactDOM.render(
+    <App identity={identity} principal={principal} agent={agent} />,
+    document.getElementById("root")
+  );
 }
 
 init();

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import CreateDiary from './CreateDiary';
 import Card from './Card';
-import { deardiary } from '../../../declarations/deardiary';
+import { createActor, canisterId } from '../../../declarations/deardiary';
 import { useNavigate } from "react-router-dom";
-import { Principal } from '@icp-sdk/core/principal';
 import Header from './Header';
 import AddButton from './AddButton';
+import { useAuth } from '../AuthContext';
 
 
 function Create() {
     let navigate = useNavigate();
+    const { agent } = useAuth();
 
-    const [diariesList, setDiariesList] = useState([]);
     const [nftPrincipal, setNftPrincipal] = useState('');
     const [showLoader, setShowLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -27,15 +27,15 @@ function Create() {
     }, []);
 
     const fetchData = async () => {
+        const deardiary = createActor(canisterId, { agent });
         const diariesArray = await deardiary.readDiaries();
         setDiaries(diariesArray);
     };
 
     const handleAddingDiary = async (newDiary) => {
+        const deardiary = createActor(canisterId, { agent });
         const currentTitle = newDiary.title;
         const currentContent = newDiary.content;
-        // const currentImage = newDiary.image;
-        // const imageByteData = [...new Uint8Array(await currentImage.arrayBuffer())];
         setDiaries((prevDiaries) => {
             deardiary.createDiary(currentTitle, currentContent);
             return [newDiary, ...prevDiaries];
@@ -43,6 +43,7 @@ function Create() {
     };
 
     const handleDeleteDiary = (id) => {
+        const deardiary = createActor(canisterId, { agent });
         deardiary.removeDiaries(id);
         setDiaries((prevDiary) => {
             return prevDiary.filter((diary, index) => {
@@ -59,7 +60,6 @@ function Create() {
         setCreateButtonShowing(false);
     };
 
-    // TODO: hook editing method up
     const handleEditDiary = (id) => {
         setCreateButtonShowing(false);
         const currentDiary = diaries[id];
@@ -69,6 +69,7 @@ function Create() {
     };
 
     const handleMintDiaryOnClick = async (id) => {
+        const deardiary = createActor(canisterId, { agent });
         setShowLoader(true);
         handleDeleteDiary(id);
         const title = diaries[id].title;
@@ -120,8 +121,6 @@ function Create() {
                             <AddButton handleClick={handleCreateNewDiary} buttonName="diary"  />
                             <div className='diaries-gallery'>
                                 {diaries.map((diary, index) => {
-                                    {/* const imageContent = new Uint8Array(diary.image);
-                                    const imageUrl = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' })); */}
                                     return (
                                         <Card
                                             key={index}
@@ -130,21 +129,15 @@ function Create() {
                                             staticContent={diary.content}
                                             onMint={handleMintDiaryOnClick}
                                             onDelete={handleDeleteDiary}
-                                            // onEdit={handleEditDiary}
                                             isCardMinted={false}
-                                            // currentImage={imageUrl}
                                         />
                                     )
-                                }
-                                )}
+                                })}
                             </div>
                         </>
                     ) : (
                         <CreateDiary
-                            // onAdd={handleAddingDiary}
                             handleCloseDiary={handleCloseDiary}
-                            // editTitle={editTitle}
-                            // editContent={editContent}
                             isDiaryEddited={isDiaryEddited}
                         />
                     )

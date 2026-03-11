@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Actor, HttpAgent } from "@icp-sdk/core/agent";
+import { Actor } from "@icp-sdk/core/agent";
 import { idlFactory } from '../../../declarations/nft';
-import { deardiary } from '../../../declarations/deardiary';
-import { Principal } from '@icp-sdk/core/principal';
-import CURRENT_USER_ID from '../index';
+import { createActor, canisterId as deardiaryCanisterId } from '../../../declarations/deardiary';
+import { useAuth } from '../AuthContext';
 
 function Card({
     id,
@@ -18,6 +17,8 @@ function Card({
     isCardMinted = true,
     currentImage
 }) {
+    const { agent, principal } = useAuth();
+
     const [label, setLabel] = useState();
     const [owner, setOwner] = useState();
     const [content, setContent] = useState();
@@ -25,21 +26,20 @@ function Card({
     const [priceInput, setPriceInput] = useState();
     const [priceListing, setPriceListing] = useState();
     const [blur, setBlur] = useState();
-    // const [image, setImage] = useState();
 
     const currentId = id;
 
-    const localHost = "http://localhost:8080/";
-    const agent = new HttpAgent({ host: localHost });
-    // TODO: remove following line when deploy
-    agent.fetchRootKey();
+    // NFTActor is set during loadNFT and reused in handleSell
     let NFTActor;
 
     const loadNFT = async () => {
+        // Use the authenticated agent from context — carries the user identity
         NFTActor = await Actor.createActor(idlFactory, {
             agent,
             canisterId: currentId,
         });
+
+        const deardiary = createActor(deardiaryCanisterId, { agent });
 
         const label = await NFTActor.getLabel();
         setLabel(label);
@@ -50,11 +50,6 @@ function Card({
 
         const content = await NFTActor.getContent();
         setContent(content);
-
-        // const coverImage = await NFTActor.getCoverImage();
-        // const imageContent = new Uint8Array(coverImage);
-        // const image = URL.createObjectURL(new Blob([imageContent.buffer], { type: 'image/png' }));
-        // setImage(image);
 
         if (role === "collection") {
             const nftIsListed = await deardiary.isListed(id);
@@ -69,7 +64,7 @@ function Card({
 
         } else if (role === "discover") {
             const originalOwner = await deardiary.getOriginalOwner(id);
-            if (originalOwner.toText() !== CURRENT_USER_ID.toText()) {
+            if (originalOwner.toText() !== principal.toText()) {
                 setButton(<button onClick={handleBuy} className="sell-confirm-button">Buy</button>);
             } else {
                 setButton(<div className="listed-banner">You own this NFT</div>);
@@ -94,7 +89,6 @@ function Card({
             } else {
                 setButton(<button onClick={handleOnClick} className="sell-confirm-button">Sell</button>);
             };
-
         }
     };
 
@@ -140,10 +134,12 @@ function Card({
     };
 
     const handleBuy = async (e) => {
-        console.log('Buy NFT')
+        console.log('Buy NFT');
     };
 
     const handleSell = async (e) => {
+        const deardiary = createActor(deardiaryCanisterId, { agent });
+
         setBlur({ filter: "blur(2px)" });
         setButton(
             <button className="sell-confirm-button">
@@ -198,7 +194,6 @@ function Card({
                         </div>
                         <div className="card-title"><b>Title: </b>{staticTitle}</div>
                         <button onClick={handleMint}>Mint</button>
-                        {/* <button onClick={handleEdit}>Edit</button> */}
                         <button onClick={handleDelete}>Delete</button>
                     </div>
                 )
