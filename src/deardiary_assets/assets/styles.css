@@ -909,3 +909,108 @@ footer p {
   }
 }
 
+/* ── Earnings panel (My NFTs page) ──────────────────────────────────── */
+.earnings-panel {
+  width: min(500px, 92vw);
+  margin: 0 auto 24px;
+  background: #f2f2f2;
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0px 2px 12px 0 rgba(0, 0, 0, 0.10);
+}
+
+.earnings-panel-title {
+  font-size: 13px;
+  color: #8C8C8C;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.earnings-demo-badge {
+  font-size: 10px;
+  background: #F7A654;
+  color: #fff;
+  border-radius: 10px;
+  padding: 2px 7px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.earnings-total {
+  font-size: 28px;
+  font-weight: 700;
+  color: #3E3E40;
+  font-family: 'Dancing Script', cursive;
+  margin-bottom: 4px;
+}
+
+.earnings-note {
+  font-size: 11px;
+  color: #8C8C8C;
+  line-height: 1.5;
+}
+
+/* ── Buy fee breakdown popup ────────────────────────────────────────── */
+.buy-breakdown {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  width: 100%;
+}
+
+.buy-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.buy-breakdown-total {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  color: #3E3E40;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 6px;
+  margin-top: 4px;
+  margin-bottom: 2px;
+}
+
+/* ── Full diary read view (expands inside card) ─────────────────────── */
+.diary-read-toggle {
+  background: transparent;
+  border: 1px solid #8C8C8C;
+  border-radius: 4px;
+  color: #8C8C8C;
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+  margin: 6px 0 2px;
+  width: 100%;
+}
+
+.diary-read-toggle:hover {
+  border-color: #5bc0de;
+  color: #5bc0de;
+}
+
+.diary-content-expanded {
+  margin-top: 8px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #374151;
+  max-height: 300px;
+  overflow-y: auto;
+}

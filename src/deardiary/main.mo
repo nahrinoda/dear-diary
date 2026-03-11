@@ -26,6 +26,8 @@ persistent actor DDiary {
   var nftPrincipalEntries : [Principal] = [];
   var ownerEntries : [(Principal, [Principal])] = [];
   var listingEntries : [(Principal, Listing)] = [];
+  var creatorEntries : [(Principal, Principal)] = [];   // NFT ID → original creator
+  var earningsEntries : [(Principal, Nat)] = [];        // Principal → cumulative ICP e8s
   var diaries : List.List<Diary> = List.nil<Diary>();
 
   // ---------------------------------------------------------------------------
@@ -35,6 +37,8 @@ persistent actor DDiary {
   transient var mapOfNFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1, Principal.equal, Principal.hash);
   transient var mapOfOwners = HashMap.HashMap<Principal, List.List<Principal>>(1, Principal.equal, Principal.hash);
   transient var mapOfListings = HashMap.HashMap<Principal, Listing>(1, Principal.equal, Principal.hash);
+  transient var mapOfCreators = HashMap.HashMap<Principal, Principal>(1, Principal.equal, Principal.hash);
+  transient var mapOfEarnings = HashMap.HashMap<Principal, Nat>(1, Principal.equal, Principal.hash);
 
   // ---------------------------------------------------------------------------
   // Upgrade hooks
@@ -48,6 +52,8 @@ persistent actor DDiary {
     );
 
     listingEntries := Iter.toArray(mapOfListings.entries());
+    creatorEntries := Iter.toArray(mapOfCreators.entries());
+    earningsEntries := Iter.toArray(mapOfEarnings.entries());
   };
 
   system func postupgrade() {
@@ -64,9 +70,19 @@ persistent actor DDiary {
       mapOfListings.put(nftId, listing);
     };
 
+    for ((nftId, creator) in creatorEntries.vals()) {
+      mapOfCreators.put(nftId, creator);
+    };
+
+    for ((user, amount) in earningsEntries.vals()) {
+      mapOfEarnings.put(user, amount);
+    };
+
     nftPrincipalEntries := [];
     ownerEntries := [];
     listingEntries := [];
+    creatorEntries := [];
+    earningsEntries := [];
   };
 
   // ---------------------------------------------------------------------------
@@ -103,6 +119,9 @@ persistent actor DDiary {
 
     mapOfNFTs.put(newNFTPrincipal, newNFT);
     addToOwnershipMap(owner, newNFTPrincipal);
+
+    // Track the original creator for royalty routing
+    mapOfCreators.put(newNFTPrincipal, owner);
 
     return newNFTPrincipal;
   };
@@ -174,11 +193,30 @@ persistent actor DDiary {
     };
   };
 
+  // Returns the original creator of an NFT (for royalty display).
+  // Returns anonymous principal if not tracked (e.g. legacy NFTs).
+  public query func getCreator(nftId: Principal) : async Principal {
+    switch (mapOfCreators.get(nftId)) {
+      case null return Principal.fromText("2vxsx-fae");
+      case (?c) c;
+    };
+  };
+
+  // Returns total simulated earnings (ICP e8s) accumulated by a user.
+  // In demo mode: no real tokens move, this is a tracked simulation.
+  public query func getEarnings(user: Principal) : async Nat {
+    switch (mapOfEarnings.get(user)) {
+      case null 0;
+      case (?n) n;
+    };
+  };
+
   // ---------------------------------------------------------------------------
-  // Purchase
+  // Purchase — transfers NFT ownership and records simulated earnings split:
+  //   10% → original creator (royalty, enforced at canister level)
+  //    1% → platform
+  //   89% → seller
   // ---------------------------------------------------------------------------
-  // Transfers an NFT from the DearDiary escrow canister to the buyer.
-  // The seller's entry in mapOfOwners is cleared; the buyer's is updated.
   public shared(msg) func completePurchase(nftId: Principal) : async Text {
     let listing = switch (mapOfListings.get(nftId)) {
       case null return "NFT is not listed.";
@@ -194,6 +232,25 @@ persistent actor DDiary {
       case (?n) n;
     };
 
+    // --- Earnings split (demo mode: simulated, no real token transfer) ---
+    let price = listing.itemPrice;
+    let royalty = price * 10 / 100;
+    let sellerAmount = price * 89 / 100;
+    // Platform keeps the remaining 1% (price - royalty - sellerAmount)
+
+    // Route royalty to original creator (falls back to seller if not tracked)
+    let creator = switch (mapOfCreators.get(nftId)) {
+      case null listing.itemOwner;
+      case (?c) c;
+    };
+    let prevCreator = switch (mapOfEarnings.get(creator)) { case null 0; case (?n) n };
+    mapOfEarnings.put(creator, prevCreator + royalty);
+
+    // Route sale proceeds to seller
+    let prevSeller = switch (mapOfEarnings.get(listing.itemOwner)) { case null 0; case (?n) n };
+    mapOfEarnings.put(listing.itemOwner, prevSeller + sellerAmount);
+
+    // --- Transfer ownership ---
     // DearDiary canister is the current owner (set during listing); transfer to buyer.
     let transferResult = await nftActor.transferOwnership(msg.caller);
     if (transferResult != "Success") {

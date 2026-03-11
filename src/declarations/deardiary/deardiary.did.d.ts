@@ -6,7 +6,9 @@ export interface Diary { 'title' : string, 'content' : string }
 export interface _SERVICE {
   'completePurchase' : ActorMethod<[Principal], string>,
   'createDiary' : ActorMethod<[string, string], undefined>,
+  'getCreator' : ActorMethod<[Principal], Principal>,
   'getDearDiaryCanisterID' : ActorMethod<[], Principal>,
+  'getEarnings' : ActorMethod<[Principal], bigint>,
   'getListedNFTPrice' : ActorMethod<[Principal], bigint>,
   'getListedNFTs' : ActorMethod<[], Array<Principal>>,
   'getOriginalOwner' : ActorMethod<[Principal], Principal>,

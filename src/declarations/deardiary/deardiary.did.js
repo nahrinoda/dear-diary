@@ -3,7 +3,9 @@ export const idlFactory = ({ IDL }) => {
   return IDL.Service({
     'completePurchase' : IDL.Func([IDL.Principal], [IDL.Text], []),
     'createDiary' : IDL.Func([IDL.Text, IDL.Text], [], ['oneway']),
+    'getCreator'  : IDL.Func([IDL.Principal], [IDL.Principal], ['query']),
     'getDearDiaryCanisterID' : IDL.Func([], [IDL.Principal], ['query']),
+    'getEarnings' : IDL.Func([IDL.Principal], [IDL.Nat], ['query']),
     'getListedNFTPrice' : IDL.Func([IDL.Principal], [IDL.Nat], ['query']),
     'getListedNFTs' : IDL.Func([], [IDL.Vec(IDL.Principal)], ['query']),
     'getOriginalOwner' : IDL.Func([IDL.Principal], [IDL.Principal], ['query']),

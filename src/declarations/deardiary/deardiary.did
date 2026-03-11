@@ -6,7 +6,9 @@ type Diary =
 service : {
   completePurchase: (nftId: principal) -> (text);
   createDiary: (titleText: text, contentText: text) -> () oneway;
+  getCreator: (nftId: principal) -> (principal) query;
   getDearDiaryCanisterID: () -> (principal) query;
+  getEarnings: (user: principal) -> (nat) query;
   getListedNFTPrice: (id: principal) -> (nat) query;
   getListedNFTs: () -> (vec principal) query;
   getOriginalOwner: (id: principal) -> (principal) query;
