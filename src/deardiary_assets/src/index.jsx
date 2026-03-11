@@ -26,9 +26,18 @@ async function handleAuthenticated(authClient) {
     ? "https://icp-api.io"
     : "http://localhost:8000";
 
-  const agent = new HttpAgent({ identity, host });
+  const isLocal = process.env.DFX_NETWORK !== "ic";
 
-  if (process.env.DFX_NETWORK !== "ic") {
+  const agent = new HttpAgent({
+    identity,
+    host,
+    // Disable query signature verification in local dev.
+    // Local replica keys change on every restart, making cert verification
+    // unreliable. This has no security impact on localhost.
+    ...(isLocal && { verifyQuerySignatures: false }),
+  });
+
+  if (isLocal) {
     await agent.fetchRootKey();
   }
 

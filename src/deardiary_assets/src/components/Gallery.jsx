@@ -9,23 +9,30 @@ function Gallery({ title, role }) {
     const { agent, principal } = useAuth();
     const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         fetchNFTs();
     }, []);
 
     const fetchNFTs = async () => {
-        const deardiary = createActor(canisterId, { agent });
-        let ids = [];
+        try {
+            const deardiary = createActor(canisterId, { agent });
+            let ids = [];
 
-        if (role === 'collection') {
-            ids = await deardiary.getOwnedNFTs(principal);
-        } else if (role === 'discover') {
-            ids = await deardiary.getListedNFTs();
+            if (role === 'collection') {
+                ids = await deardiary.getOwnedNFTs(principal);
+            } else if (role === 'discover') {
+                ids = await deardiary.getListedNFTs();
+            }
+
+            setItems(ids.map((id) => <Card key={id.toText()} id={id} role={role} />));
+        } catch (err) {
+            console.error('Failed to fetch NFTs:', err);
+            setError('Could not load NFTs. Please refresh the page.');
+        } finally {
+            setLoading(false);
         }
-
-        setItems(ids.map((id) => <Card key={id.toText()} id={id} role={role} />));
-        setLoading(false);
     };
 
     return (
@@ -37,6 +44,8 @@ function Gallery({ title, role }) {
                     <div className="lds-ellipsis" style={{ margin: '60px auto' }}>
                         <div></div><div></div><div></div><div></div>
                     </div>
+                ) : error ? (
+                    <p style={{ textAlign: 'center', color: '#DE5B5B', marginTop: '60px' }}>{error}</p>
                 ) : items.length === 0 ? (
                     <p style={{ textAlign: 'center', color: '#8C8C8C', marginTop: '60px' }}>
                         {role === 'collection' ? 'No NFTs in your collection yet.' : 'No NFTs listed for sale yet.'}
