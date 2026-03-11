@@ -106,6 +106,7 @@ module.exports = {
     // CopyPlugin removed — DFX serves assets directly from src/deardiary_assets/assets
     new webpack.EnvironmentPlugin({
       NODE_ENV: "development",
+      DFX_NETWORK: "local",
       // PUBLIC_BASENAME controls React Router's base path.
       // Set to "/dear-diary" when serving from navox.tech/dear-diary.
       // Defaults to "/" for local dev and standalone deployments.
