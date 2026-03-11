@@ -1,6 +1,7 @@
 export const idlFactory = ({ IDL }) => {
   const Diary = IDL.Record({ 'title' : IDL.Text, 'content' : IDL.Text });
   return IDL.Service({
+    'completePurchase' : IDL.Func([IDL.Principal], [IDL.Text], []),
     'createDiary' : IDL.Func([IDL.Text, IDL.Text], [], ['oneway']),
     'getDearDiaryCanisterID' : IDL.Func([], [IDL.Principal], ['query']),
     'getListedNFTPrice' : IDL.Func([IDL.Principal], [IDL.Nat], ['query']),

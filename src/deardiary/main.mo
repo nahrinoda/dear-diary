@@ -174,4 +174,47 @@ persistent actor DDiary {
     };
   };
 
+  // ---------------------------------------------------------------------------
+  // Purchase
+  // ---------------------------------------------------------------------------
+  // Transfers an NFT from the DearDiary escrow canister to the buyer.
+  // The seller's entry in mapOfOwners is cleared; the buyer's is updated.
+  public shared(msg) func completePurchase(nftId: Principal) : async Text {
+    let listing = switch (mapOfListings.get(nftId)) {
+      case null return "NFT is not listed.";
+      case (?l) l;
+    };
+
+    if (Principal.equal(msg.caller, listing.itemOwner)) {
+      return "You can't buy your own NFT.";
+    };
+
+    let nftActor : NFTActorClass.NFT = switch (mapOfNFTs.get(nftId)) {
+      case null return "NFT does not exist.";
+      case (?n) n;
+    };
+
+    // DearDiary canister is the current owner (set during listing); transfer to buyer.
+    let transferResult = await nftActor.transferOwnership(msg.caller);
+    if (transferResult != "Success") {
+      return transferResult;
+    };
+
+    // Remove nftId from the original seller's ownership list.
+    var sellerNFTs : List.List<Principal> = switch (mapOfOwners.get(listing.itemOwner)) {
+      case null List.nil<Principal>();
+      case (?l) l;
+    };
+    sellerNFTs := List.filter<Principal>(sellerNFTs, func(p) { not Principal.equal(p, nftId) });
+    mapOfOwners.put(listing.itemOwner, sellerNFTs);
+
+    // Add nftId to buyer's ownership list.
+    addToOwnershipMap(msg.caller, nftId);
+
+    // Remove the listing.
+    mapOfListings.delete(nftId);
+
+    return "Success";
+  };
+
 };

@@ -4,6 +4,7 @@ type Diary =
    title: text;
  };
 service : {
+  completePurchase: (nftId: principal) -> (text);
   createDiary: (titleText: text, contentText: text) -> () oneway;
   getDearDiaryCanisterID: () -> (principal) query;
   getListedNFTPrice: (id: principal) -> (nat) query;

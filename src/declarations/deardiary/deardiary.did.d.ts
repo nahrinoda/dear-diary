@@ -4,6 +4,7 @@ import type { IDL } from '@icp-sdk/core/candid';
 
 export interface Diary { 'title' : string, 'content' : string }
 export interface _SERVICE {
+  'completePurchase' : ActorMethod<[Principal], string>,
   'createDiary' : ActorMethod<[string, string], undefined>,
   'getDearDiaryCanisterID' : ActorMethod<[], Principal>,
   'getListedNFTPrice' : ActorMethod<[Principal], bigint>,

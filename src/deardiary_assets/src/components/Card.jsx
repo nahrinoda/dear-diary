@@ -134,7 +134,27 @@ function Card({
     };
 
     const handleBuy = async (e) => {
-        console.log('Buy NFT');
+        const deardiary = createActor(deardiaryCanisterId, { agent });
+
+        setButton(
+            <button className="sell-confirm-button">
+                <div className="lds-ellipsis">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </button>
+        );
+
+        const result = await deardiary.completePurchase(id);
+        if (result === "Success") {
+            setButton(<div className="listed-banner">You own this NFT</div>);
+            setPriceListing(null);
+        } else {
+            setButton(<button onClick={handleBuy} className="sell-confirm-button">Buy</button>);
+            console.error("Purchase failed:", result);
+        }
     };
 
     const handleSell = async (e) => {
