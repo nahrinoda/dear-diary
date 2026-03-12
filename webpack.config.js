@@ -124,15 +124,13 @@ module.exports = {
     }),
   ],
   devServer: {
-    proxy: {
-      "/api": {
+    proxy: [
+      {
+        context: ["/api"],
         target: "http://localhost:8000",
         changeOrigin: true,
-        pathRewrite: {
-          "^/api": "/api",
-        },
       },
-    },
+    ],
     hot: true,
     watchFiles: [path.resolve(__dirname, "src", frontendDirectory)],
     liveReload: true,

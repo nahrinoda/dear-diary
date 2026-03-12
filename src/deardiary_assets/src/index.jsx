@@ -4,6 +4,9 @@ import App from "./components/App";
 import '../assets/styles.css';
 import { AuthClient } from "@icp-sdk/auth/client";
 import { HttpAgent } from "@icp-sdk/core/agent";
+import { inject } from '@vercel/analytics';
+
+inject();
 
 function showSplash() {
   ReactDOM.render(
