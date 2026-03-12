@@ -109,11 +109,11 @@ function Create() {
                 {createButtonShowing ? (
                     <>
                         <AddButton handleClick={handleCreateNewDiary} buttonName="diary" />
-                        {diaries.length > 0 && (
-                            <p style={{ textAlign: 'center', color: '#8C8C8C', fontSize: 13, margin: '4px 0 12px' }}>
-                                {diaries.length} {diaries.length === 1 ? 'diary' : 'diaries'} saved
-                            </p>
-                        )}
+                        <p style={{ textAlign: 'center', color: '#8C8C8C', fontSize: 13, margin: '4px 0 12px' }}>
+                            {diaries.length > 0
+                                ? `${diaries.length} ${diaries.length === 1 ? 'diary' : 'diaries'} saved`
+                                : 'No drafts yet. Click above to start writing!'}
+                        </p>
                         <div className='diaries-gallery'>
                             {diaries.map((diary) => (
                                 <Card

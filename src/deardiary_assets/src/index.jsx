@@ -5,7 +5,27 @@ import '../assets/styles.css';
 import { AuthClient } from "@icp-sdk/auth/client";
 import { HttpAgent } from "@icp-sdk/core/agent";
 
+function showSplash() {
+  ReactDOM.render(
+    <div style={{
+      display: 'flex', flexDirection: 'column', alignItems: 'center',
+      justifyContent: 'center', height: '100vh', background: '#D9D6D2',
+      fontFamily: "'Dancing Script', cursive", color: '#8C8C8C',
+    }}>
+      <h1 style={{ fontSize: 48, fontWeight: 300, marginBottom: 16 }}>Dear Diary</h1>
+      <p style={{ fontFamily: "'Open Sans', sans-serif", fontSize: 14, letterSpacing: 1 }}>
+        Signing you in…
+      </p>
+      <div className="lds-ellipsis" style={{ marginTop: 16 }}>
+        <div></div><div></div><div></div><div></div>
+      </div>
+    </div>,
+    document.getElementById("root")
+  );
+}
+
 const init = async () => {
+  showSplash();
   const authClient = await AuthClient.create();
   if (await authClient.isAuthenticated()) {
     handleAuthenticated(authClient);

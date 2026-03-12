@@ -7,7 +7,7 @@ import Footer from './Footer';
 
 function LandingPage() {
     return (
-        <>
+        <div className="landing-page-wrapper">
             <div className="landing-page-topbar">
                 <Link to="/discover">
                     <div className="landing-page-links">Discover</div>
@@ -31,7 +31,7 @@ function LandingPage() {
                         <Link to="/create">
                             <div className="start-creating">
                                 Start Creating
-                                <span className="material-icons md-18">
+                                <span className="material-icons md-18" aria-hidden="true">
                                     arrow_forward_ios
                                 </span>
                             </div>
@@ -40,7 +40,7 @@ function LandingPage() {
                 </div>
             </div>
             <Footer />
-        </>
+        </div>
     )
 }
 

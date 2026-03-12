@@ -22,6 +22,7 @@ function ToolBtn({ onClick, active, title, children }) {
         <button
             type="button"
             title={title}
+            aria-label={title}
             onMouseDown={(e) => { e.preventDefault(); onClick(); }}
             style={{
                 background: active ? '#1a56db' : 'transparent',
@@ -52,6 +53,7 @@ function RichEditor({ onChange, disabled }) {
     const colorInputRef = useRef(null);
     const [showLinkInput, setShowLinkInput] = useState(false);
     const [linkValue, setLinkValue] = useState('');
+    const [, forceUpdate] = useState(0);
 
     const editor = useEditor({
         extensions: [
@@ -67,6 +69,8 @@ function RichEditor({ onChange, disabled }) {
         onUpdate: ({ editor }) => {
             if (onChange) onChange(editor.getHTML());
         },
+        onSelectionUpdate: () => forceUpdate(n => n + 1),
+        onTransaction: () => forceUpdate(n => n + 1),
     });
 
     if (!editor) return null;
@@ -119,10 +123,10 @@ function RichEditor({ onChange, disabled }) {
             }}>
                 {/* Undo / Redo */}
                 <ToolBtn title="Undo" onClick={() => editor.chain().focus().undo().run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>undo</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>undo</span>
                 </ToolBtn>
                 <ToolBtn title="Redo" onClick={() => editor.chain().focus().redo().run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>redo</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>redo</span>
                 </ToolBtn>
 
                 <Divider />
@@ -193,40 +197,40 @@ function RichEditor({ onChange, disabled }) {
 
                 {/* Alignment */}
                 <ToolBtn title="Align left" active={editor.isActive({ textAlign: 'left' })} onClick={() => editor.chain().focus().setTextAlign('left').run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>format_align_left</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>format_align_left</span>
                 </ToolBtn>
                 <ToolBtn title="Align center" active={editor.isActive({ textAlign: 'center' })} onClick={() => editor.chain().focus().setTextAlign('center').run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>format_align_center</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>format_align_center</span>
                 </ToolBtn>
                 <ToolBtn title="Align right" active={editor.isActive({ textAlign: 'right' })} onClick={() => editor.chain().focus().setTextAlign('right').run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>format_align_right</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>format_align_right</span>
                 </ToolBtn>
 
                 <Divider />
 
                 {/* Lists */}
                 <ToolBtn title="Bullet list" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>format_list_bulleted</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>format_list_bulleted</span>
                 </ToolBtn>
                 <ToolBtn title="Numbered list" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>format_list_numbered</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>format_list_numbered</span>
                 </ToolBtn>
 
                 <Divider />
 
                 {/* Blockquote */}
                 <ToolBtn title="Blockquote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>format_quote</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>format_quote</span>
                 </ToolBtn>
 
                 {/* Horizontal rule */}
                 <ToolBtn title="Horizontal rule" onClick={() => editor.chain().focus().setHorizontalRule().run()}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>horizontal_rule</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>horizontal_rule</span>
                 </ToolBtn>
 
                 {/* Link */}
                 <ToolBtn title="Link" active={editor.isActive('link')} onClick={handleLink}>
-                    <span className="material-icons" style={{ fontSize: 16 }}>link</span>
+                    <span className="material-icons" aria-hidden="true" style={{ fontSize: 16 }}>link</span>
                 </ToolBtn>
             </div>
 

@@ -93,11 +93,20 @@ header {
   display: block;
 }
 
+.landing-page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .landing-page-container {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 20px 0;
 }
 
 .header-title {
@@ -162,8 +171,8 @@ header {
   font-size: 60px;
   color: #8C8C8C;
   font-family: 'Dancing Script', cursive;
-  position: absolute;
-  top: -40px;
+  margin-bottom: -20px;
+  z-index: 1;
 }
 
 footer {
@@ -449,14 +458,12 @@ footer p {
 }
 
 .landing-page-topbar {
-  position: absolute;
   text-align: right;
   width: min(850px, 92vw);
-  top: 30px;
+  padding-top: 16px;
   display: flex;
   justify-content: end;
-  left: 50%;
-  transform: translate(-50%);
+  margin: 0 auto;
 }
 
 .landing-page-links {
@@ -793,7 +800,7 @@ footer p {
 
   .landing-page-header-title {
     font-size: 42px;
-    top: -28px;
+    margin-bottom: -14px;
   }
 
   .landing-page-header-box {
@@ -855,7 +862,7 @@ footer p {
   /* Landing page */
   .landing-page-header-title {
     font-size: 30px;
-    top: -20px;
+    margin-bottom: -10px;
     letter-spacing: 1px;
   }
 

@@ -89,10 +89,11 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
                         className='save-button'
                         onClick={handleSubmit(onSubmit)}
                         disabled={isBusy}
+                        aria-label="Save and mint diary"
                     >
                         {isBusy
                             ? <div className="lds-ellipsis" style={{ display: 'inline-block', width: 24, height: 24 }}><div></div><div></div><div></div><div></div></div>
-                            : <span className='material-icons md-18'>save</span>
+                            : <span className='material-icons md-18' aria-hidden="true">save</span>
                         }
                     </button>
                     <button
@@ -100,8 +101,9 @@ function CreateDiary({ handleCloseDiary, onMintSuccess }) {
                         className='delete-button'
                         onClick={handleCloseDiary}
                         disabled={isBusy}
+                        aria-label="Close editor"
                     >
-                        <span className='material-icons md-18'>close</span>
+                        <span className='material-icons md-18' aria-hidden="true">close</span>
                     </button>
                 </div>
             </div>
