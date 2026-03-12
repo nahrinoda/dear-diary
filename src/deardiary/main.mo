@@ -113,7 +113,7 @@ persistent actor DDiary {
     let owner: Principal = msg.caller;
 
     // New Motoko syntax for attaching cycles to an async call
-    let newNFT = await (with cycles = 100_500_000_000) NFTActorClass.NFT(name, owner, content, coverImage);
+    let newNFT = await (with cycles = 600_000_000_000) NFTActorClass.NFT(name, owner, content, coverImage);
 
     let newNFTPrincipal = await newNFT.getCanisterId();
 
